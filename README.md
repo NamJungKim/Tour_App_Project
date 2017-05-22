@@ -15,3 +15,10 @@ TourSearch Storyboard Thema CheckBox 구현 완료</p>
 결과 1. 대분류,중분류,소분류마다 PickerView가 달라도 대분류끼리, 중분류끼리, 소분류끼리는 같으므로 실패</p>
 <p>방법 2. 대분류를 바꿀때마다 하위분류들의 PickerView들을 삭제하고 새로만든다.<br>
 결과 2. 상위분류의 Data들을 교체할때마다 하위분류들의 row값이 0으로 모조리 초기화됨 성공적. 메모리, cpu 사용 이슈는 경과를 두고봐야 할 것 같음</p>
+
+# Forth Commit - 2017.05.19
+<p>README.md 양식 수정</p>
+
+# Fiveth Commit - 2017.05.22
+<p>서비스 코드 입력완료.<br>
+서비스 코드 맵핑완료</p>

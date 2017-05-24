@@ -8,21 +8,41 @@
 
 import Foundation
 import UIKit
-class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPickerViewDelegate{
+class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPickerViewDelegate,XMLParserDelegate, UITableViewDataSource{
     @IBOutlet weak var areaTextField : UITextField!
     @IBOutlet var detailAreaTextField: UITextField!
     @IBOutlet var largeThemaTextField: UITextField!
     @IBOutlet var midThemaTextField: UITextField!
     @IBOutlet var smallThemaTextField: UITextField!
+    @IBOutlet var keword: UITextField!
+    
     let city = CityData()
     let thema = ThemaData()
+    
     //텍스트 필드를 완료 안누르고 다른 텍스트 필드를 누르면 적용되는걸 방지
-    var selectRowForCity = 0
+    var selectRowForCity : Int = 0
     var selectRowForDetail = 0
     var selectRowForLargeThema = 0
     var selectRowForMidThema = 0
     var selectRowForSmallThema = 0
     var flagForPickup = 0
+    
+    var url : String = ""
+
+    @IBOutlet var tbData: UITableView!
+    
+    //xml파일을 다운로드 및 파싱하는 오브젝트
+    var parser = XMLParser()
+    //feed 데이터를 저장하는 mutable array
+    var posts = NSMutableArray()
+    //title과 date 같은 feed데이터를 저장하는 mutable dictionary
+    var elements = NSMutableDictionary()
+    var element = NSString()
+    //저장 문자열 변수
+    var title1 = NSMutableString()
+    var addr = NSMutableString()
+    var imageurl = NSMutableString()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         //textfield 초기화
@@ -246,4 +266,114 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
             break
         }
     }
+    @IBAction func onSearch(_ sender: Any) {
+        var cityString = ""
+        var sigunString = ""
+        var largeThemaString = ""
+        var midThemaString = ""
+        var smallThemaString = ""
+        let kewordString = "&keword="+keword.text!
+        
+        if kewordString == "&keword="{
+            url = "http://api.visitkorea.or.kr/openapi/service/rest/KorWithService/areaBasedList?serviceKey=ex%2FH5GN%2BB21X%2B87vYrBxFYdAWSz1cWxgQQDDW9lEeckwagijgq6opR6MlhGxE%2Bth5ydwv1SV%2FVhyd1FpFOlC8g%3D%3D&MobileOS=IOS&MobileApp=OYTG&numOfRows=1000"
+            url += kewordString
+        }else{
+            url = "http://api.visitkorea.or.kr/openapi/service/rest/KorWithService/searchKeyword?serviceKey=ex%2FH5GN%2BB21X%2B87vYrBxFYdAWSz1cWxgQQDDW9lEeckwagijgq6opR6MlhGxE%2Bth5ydwv1SV%2FVhyd1FpFOlC8g%3D%3D&MobileOS=IOS&MobileApp=OYTG&numOfRows=1000"
+        }
+        if selectRowForCity != 0{
+            cityString = "&areaCode=" + String(city.cityCode[selectRowForCity])
+            url += cityString
+            if selectRowForDetail != 0{
+                sigunString = "&sigunguCode=" + String(city.detail[selectRowForCity][selectRowForDetail])
+                url += sigunString
+            }
+        }
+        if selectRowForLargeThema != 0{
+            largeThemaString = "&cat1=" + String(thema.largeCode[selectRowForLargeThema])
+            url += largeThemaString
+            if selectRowForMidThema != 0{
+                midThemaString = "&cat2=" + String(thema.midCode[selectRowForLargeThema][selectRowForMidThema])
+                url += midThemaString
+                if selectRowForSmallThema != 0{
+                    smallThemaString = "&cat3=" + String(thema.smallCode[selectRowForLargeThema][selectRowForMidThema][selectRowForSmallThema])
+                    url += smallThemaString
+                }
+            }
+        }
+        print(url)
+        beginParsing()
+    }
+    
+    func beginParsing(){
+        posts = []
+        parser = XMLParser(contentsOf:(URL(string:url))!)!
+        parser.delegate = self
+        parser.parse()
+        tbData!.reloadData()
+    }
+    
+    func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?,qualifiedName qName: String?, attributes attributeDict: [String : String]){
+        element = elementName as NSString
+        if( elementName as NSString).isEqual(to: "item"){
+            elements = NSMutableDictionary()
+            elements = [:]
+            title1 = NSMutableString()
+            title1 = ""
+            addr = NSMutableString()
+            addr = ""
+            imageurl = NSMutableString()
+            imageurl = ""
+        }
+    }
+    
+    func parser(_ parser: XMLParser, foundCharacters string: String) {
+        if element.isEqual(to: "title"){
+            title1.append(string)
+        }else if element.isEqual(to: "addr"){
+            addr.append(string)
+        }else if element.isEqual(to: "firstimage"){
+            imageurl.append(string)
+        }
+    }
+    
+    func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?,
+                qualifiedName qName: String?){
+        if (elementName as NSString).isEqual(to: "item"){
+            if !title1.isEqual(nil){
+                elements.setObject(title1, forKey: "title" as NSCopying)
+            }
+            if !addr.isEqual(nil){
+                elements.setObject(addr, forKey: "addr" as NSCopying)
+            }
+            if !imageurl.isEqual(nil){
+                elements.setObject(imageurl, forKey: "firstimage" as NSCopying)
+            }
+            
+            posts.add(elements)
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return posts.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        var cell : UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "tourSearchCell")!
+        if cell.isEqual(NSNull) {
+            cell = Bundle.main.loadNibNamed("tourSearchCell", owner: self, options: nil)?[0] as! UITableViewCell
+        }
+        
+        cell.textLabel?.text = (posts.object(at: indexPath.row) as AnyObject).value(forKey: "title") as! NSString as String
+        cell.detailTextLabel?.text = (posts.object(at: indexPath.row) as AnyObject).value(forKey: "addr") as! NSString as String
+        if let url = URL(string: (posts.object(at: indexPath.row) as AnyObject).value(forKey: "firstimage") as! NSString as String){
+            if let addr = try? Data(contentsOf: url){
+                cell.imageView!.image = UIImage(data: addr)
+            }
+        }
+        return cell as UITableViewCell
+    }
+
+    
+    
+    
 }

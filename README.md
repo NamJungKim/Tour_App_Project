@@ -22,3 +22,7 @@ TourSearch Storyboard Thema CheckBox 구현 완료</p>
 # Fiveth Commit - 2017.05.22
 <p>서비스 코드 입력완료.<br>
 서비스 코드 맵핑완료</p>
+
+# Sixth Commit - 2017.05.24
+<p>Data Parsing 후 Table Cell에 입력 완료<br>
+Search Option 추가</p>

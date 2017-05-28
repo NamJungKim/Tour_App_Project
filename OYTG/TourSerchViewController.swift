@@ -9,6 +9,8 @@
 import Foundation
 import UIKit
 class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPickerViewDelegate,XMLParserDelegate, UITableViewDataSource{
+    
+    @IBOutlet var moreBtn: UIButton!
     @IBOutlet weak var areaTextField : UITextField!
     @IBOutlet var detailAreaTextField: UITextField!
     @IBOutlet var largeThemaTextField: UITextField!
@@ -28,21 +30,21 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
     var flagForPickup = 0
     
     var url : String = ""
-
+    var page = 1
+    var totalCount = 0
     @IBOutlet var tbData: UITableView!
     
     //xml파일을 다운로드 및 파싱하는 오브젝트
     var parser = XMLParser()
-    //feed 데이터를 저장하는 mutable array
-    var posts = NSMutableArray()
-    //title과 date 같은 feed데이터를 저장하는 mutable dictionary
-    var elements = NSMutableDictionary()
+    
     var element = NSString()
     //저장 문자열 변수
-    var title1 = NSMutableString()
-    var addr = NSMutableString()
-    var imageurl = NSMutableString()
     
+    var list : [TourIO] = {
+        var datalist = [TourIO]()
+        return datalist
+    }()
+    var tio : TourIO?
     override func viewDidLoad() {
         super.viewDidLoad()
         //textfield 초기화
@@ -63,6 +65,7 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
         addToolBar(largeThemaTextField, 3)
         addToolBar(midThemaTextField, 4)
         addToolBar(smallThemaTextField, 5)
+        moreBtn.isHidden = true
     }
     //어느 텍스트 필드가 클릭되었는지 flag변경하는 메소드
     func flagForPickupWithArea(){
@@ -272,19 +275,22 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
         var largeThemaString = ""
         var midThemaString = ""
         var smallThemaString = ""
-        let kewordString = "&keword="+keword.text!
+        list = []
+        let kewordString = "&keyword="+keword.text!
         
-        if kewordString == "&keword="{
-            url = "http://api.visitkorea.or.kr/openapi/service/rest/KorWithService/areaBasedList?serviceKey=ex%2FH5GN%2BB21X%2B87vYrBxFYdAWSz1cWxgQQDDW9lEeckwagijgq6opR6MlhGxE%2Bth5ydwv1SV%2FVhyd1FpFOlC8g%3D%3D&MobileOS=IOS&MobileApp=OYTG&numOfRows=1000"
-            url += kewordString
+        if kewordString == "&keyword="{
+            url = "http://api.visitkorea.or.kr/openapi/service/rest/KorWithService/areaBasedList?serviceKey=ex%2FH5GN%2BB21X%2B87vYrBxFYdAWSz1cWxgQQDDW9lEeckwagijgq6opR6MlhGxE%2Bth5ydwv1SV%2FVhyd1FpFOlC8g%3D%3D&MobileOS=IOS&MobileApp=OYTG&numOfRows=10"
         }else{
-            url = "http://api.visitkorea.or.kr/openapi/service/rest/KorWithService/searchKeyword?serviceKey=ex%2FH5GN%2BB21X%2B87vYrBxFYdAWSz1cWxgQQDDW9lEeckwagijgq6opR6MlhGxE%2Bth5ydwv1SV%2FVhyd1FpFOlC8g%3D%3D&MobileOS=IOS&MobileApp=OYTG&numOfRows=1000"
+            url = "http://api.visitkorea.or.kr/openapi/service/rest/KorWithService/searchKeyword?serviceKey=ex%2FH5GN%2BB21X%2B87vYrBxFYdAWSz1cWxgQQDDW9lEeckwagijgq6opR6MlhGxE%2Bth5ydwv1SV%2FVhyd1FpFOlC8g%3D%3D&MobileOS=IOS&MobileApp=OYTG&numOfRows=10"
+            let param = kewordString
+            let encodedParam = param.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)
+            url += encodedParam!
         }
         if selectRowForCity != 0{
             cityString = "&areaCode=" + String(city.cityCode[selectRowForCity])
             url += cityString
             if selectRowForDetail != 0{
-                sigunString = "&sigunguCode=" + String(city.detail[selectRowForCity][selectRowForDetail])
+                sigunString = "&sigunguCode=" + String(selectRowForDetail)
                 url += sigunString
             }
         }
@@ -300,80 +306,134 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
                 }
             }
         }
-        print(url)
-        beginParsing()
+        beginParsing(url)
+        if list.count <= totalCount{
+            moreBtn.isHidden = false
+        }
     }
     
-    func beginParsing(){
-        posts = []
+    @IBAction func moreButton(_ sender: Any) {
+            self.page += 1
+            let url = self.url+"&pageNo="+String(self.page)
+            beginParsing(url)
+    }
+    
+    
+    
+    func beginParsing(_ url : String){
         parser = XMLParser(contentsOf:(URL(string:url))!)!
         parser.delegate = self
         parser.parse()
+        if list.count >= totalCount{
+            self.moreBtn.isHidden = true
+        }
         tbData!.reloadData()
+        
+
     }
     
     func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?,qualifiedName qName: String?, attributes attributeDict: [String : String]){
         element = elementName as NSString
         if( elementName as NSString).isEqual(to: "item"){
-            elements = NSMutableDictionary()
-            elements = [:]
-            title1 = NSMutableString()
-            title1 = ""
-            addr = NSMutableString()
-            addr = ""
-            imageurl = NSMutableString()
-            imageurl = ""
+            tio = TourIO()
+            tio?.title = String()
+            tio?.title = ""
+            tio?.addr = String()
+            tio?.addr = ""
+            tio?.thumbnail = String()
+            tio?.thumbnail = ""
+            tio?.thumbnailImage = UIImage()
+            tio?.thumbnailImage = nil
         }
     }
     
     func parser(_ parser: XMLParser, foundCharacters string: String) {
+    
         if element.isEqual(to: "title"){
-            title1.append(string)
-        }else if element.isEqual(to: "addr"){
-            addr.append(string)
-        }else if element.isEqual(to: "firstimage"){
-            imageurl.append(string)
+            tio?.title?.append(string)
+        }else if element.isEqual(to: "addr1"){
+            tio?.addr?.append(string)
+        }else if element.isEqual(to: "firstimage2"){
+            tio?.thumbnail?.append(string)
+            let url : URL! = URL(string: (tio?.thumbnail!)!)
+            let imageData = try! Data(contentsOf: url)
+            tio?.thumbnailImage = UIImage(data: imageData)
+            tio?.thumbnailImage = resizeImage(image: (tio?.thumbnailImage)!, targetSize: CGSize(width: 90.0, height: 60.0))
+        }
+        if element.isEqual(to: "totalCount"){
+            totalCount = Int(string)!
         }
     }
-    
+    func resizeImage(image: UIImage, targetSize: CGSize) -> UIImage {
+        
+        // Figure out what our orientation is, and use that to form the rectangle
+        let newSize = CGSize(width: targetSize.width, height: targetSize.height)
+        
+        // This is the rect that we've calculated out and this is what is actually used below
+        let rect = CGRect(x: 0, y: 0, width: newSize.width, height: newSize.height)
+        
+        // Actually do the resizing to the rect using the ImageContext stuff
+        UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
+        image.draw(in: rect)
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return newImage!
+    }
     func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?,
                 qualifiedName qName: String?){
         if (elementName as NSString).isEqual(to: "item"){
-            if !title1.isEqual(nil){
-                elements.setObject(title1, forKey: "title" as NSCopying)
-            }
-            if !addr.isEqual(nil){
-                elements.setObject(addr, forKey: "addr" as NSCopying)
-            }
-            if !imageurl.isEqual(nil){
-                elements.setObject(imageurl, forKey: "firstimage" as NSCopying)
-            }
-            
-            posts.add(elements)
+            list.append(tio!)
         }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return posts.count
+        return list.count
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
+    {
+        return 60.0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell : UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "tourSearchCell")!
-        if cell.isEqual(NSNull) {
+        if cell.isEqual(NSNull.self) {
             cell = Bundle.main.loadNibNamed("tourSearchCell", owner: self, options: nil)?[0] as! UITableViewCell
         }
-        
-        cell.textLabel?.text = (posts.object(at: indexPath.row) as AnyObject).value(forKey: "title") as! NSString as String
-        cell.detailTextLabel?.text = (posts.object(at: indexPath.row) as AnyObject).value(forKey: "addr") as! NSString as String
-        if let url = URL(string: (posts.object(at: indexPath.row) as AnyObject).value(forKey: "firstimage") as! NSString as String){
-            if let addr = try? Data(contentsOf: url){
-                cell.imageView!.image = UIImage(data: addr)
-            }
-        }
-        return cell as UITableViewCell
-    }
+        let tio = self.list[indexPath.row]
 
+        cell.textLabel?.text = tio.title
+        cell.detailTextLabel?.text = tio.addr
+        if tio.thumbnailImage != nil{
+            cell.imageView?.image = tio.thumbnailImage
+        }else{
+            cell.imageView?.image = resizeImage(image: (cell.imageView?.image)!, targetSize: CGSize(width: 90.0, height: 60.0))
+        }
+        
+        return cell
+    }
     
     
     
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if areaTextField.isEditing{
+            areaTextField.resignFirstResponder()
+        }
+        if detailAreaTextField.isEditing{
+            detailAreaTextField.resignFirstResponder()
+        }
+        if largeThemaTextField.isEditing{
+            largeThemaTextField.resignFirstResponder()
+        }
+        if midThemaTextField.isEditing{
+            midThemaTextField.resignFirstResponder()
+        }
+        if smallThemaTextField.isEditing{
+            smallThemaTextField.resignFirstResponder()
+        }
+        if keword.isEditing{
+            keword.resignFirstResponder()
+        }
+    }
 }

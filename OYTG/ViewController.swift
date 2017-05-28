@@ -10,15 +10,21 @@ import UIKit
 
 class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
     @IBOutlet var pickerView: UIPickerView!
-    var pickerDataSource = ["관광","행사","숙박"]
+    var pickerDataSource = ["관광","행사","숙박","근처"]
     var flag : Int = 0
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         self.pickerView.dataSource = self
         self.pickerView.delegate = self
+        if !UserDefaults.standard.bool(forKey: "iscount"){
+            UserDefaults.standard.set(true, forKey: "iscount")
+            UserDefaults.standard.set(1, forKey: "count")
+        }
+    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
-    
     }
     
     override func didReceiveMemoryWarning() {
@@ -33,17 +39,13 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         return self.pickerDataSource.count
     }
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        
         return pickerDataSource[row]
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        if row == 0 {
-            flag = 0
-        }else if row == 1 {
-            flag = 1
-        }else {
-            flag = 2
-        }
+        print(row)
+        flag = row
     }
     
     @IBAction func doneToPickerViewController(_ segue:UIStoryboardSegue){

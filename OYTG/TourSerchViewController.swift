@@ -18,6 +18,7 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
     @IBOutlet var smallThemaTextField: UITextField!
     @IBOutlet var keword: UITextField!
     
+    
     let city = CityData()
     let thema = ThemaData()
     
@@ -45,6 +46,9 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
         return datalist
     }()
     var tio : TourIO?
+    
+    fileprivate var oldStoredCell:PKSwipeTableViewCell?
+
     override func viewDidLoad() {
         super.viewDidLoad()
         //textfield 초기화
@@ -67,6 +71,15 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
         addToolBar(smallThemaTextField, 5)
         moreBtn.isHidden = true
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if url != "" {
+            self.list = []
+            beginParsing(url)
+        }
+    }
+    
     //어느 텍스트 필드가 클릭되었는지 flag변경하는 메소드
     func flagForPickupWithArea(){
         flagForPickup = 1
@@ -275,7 +288,7 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
         var largeThemaString = ""
         var midThemaString = ""
         var smallThemaString = ""
-        list = []
+        self.list = []
         let kewordString = "&keyword="+keword.text!
         
         if kewordString == "&keyword="{
@@ -307,7 +320,7 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
             }
         }
         beginParsing(url)
-        if list.count <= totalCount{
+        if self.list.count <= totalCount{
             moreBtn.isHidden = false
         }
     }
@@ -324,7 +337,7 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
         parser = XMLParser(contentsOf:(URL(string:url))!)!
         parser.delegate = self
         parser.parse()
-        if list.count >= totalCount{
+        if self.list.count >= totalCount{
             self.moreBtn.isHidden = true
         }
         tbData!.reloadData()
@@ -344,6 +357,10 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
             tio?.thumbnail = ""
             tio?.thumbnailImage = UIImage()
             tio?.thumbnailImage = nil
+            tio?.contentid = String()
+            tio?.contentid = ""
+            tio?.imageString = String()
+            tio?.imageString = ""
         }
     }
     
@@ -359,9 +376,21 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
             let imageData = try! Data(contentsOf: url)
             tio?.thumbnailImage = UIImage(data: imageData)
             tio?.thumbnailImage = resizeImage(image: (tio?.thumbnailImage)!, targetSize: CGSize(width: 90.0, height: 60.0))
-        }
-        if element.isEqual(to: "totalCount"){
+        }else if element.isEqual(to: "totalCount"){
             totalCount = Int(string)!
+        }else if element.isEqual(to: "contentid"){
+            tio?.contentid?.append(string)
+            let count = UserDefaults.standard.integer(forKey: "count")
+            for index in 1..<count{
+                let i = String(index)
+                let char : String = UserDefaults.standard.object(forKey: i) as! String
+                if char == string{
+                    tio?.imageString = "yellow_star"
+                    tio?.flag = true
+                    break
+                }
+            }
+            
         }
     }
     func resizeImage(image: UIImage, targetSize: CGSize) -> UIImage {
@@ -383,12 +412,12 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
     func parser(_ parser: XMLParser, didEndElement elementName: String, namespaceURI: String?,
                 qualifiedName qName: String?){
         if (elementName as NSString).isEqual(to: "item"){
-            list.append(tio!)
+            self.list.append(tio!)
         }
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return list.count
+        return self.list.count
     }
     
     func tableView(_ tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
@@ -397,9 +426,9 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var cell : UITableViewCell = tableView.dequeueReusableCell(withIdentifier: "tourSearchCell")!
-        if cell.isEqual(NSNull.self) {
-            cell = Bundle.main.loadNibNamed("tourSearchCell", owner: self, options: nil)?[0] as! UITableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "tourSearchCell")! as! CustomTableViewCell
+        /*if cell.isEqual(NSNull.self) {
+            cell = Bundle.main.loadNibNamed("tourSearchCell", owner: self, options: nil)?[0] as! CustomTableViewCell
         }
         let tio = self.list[indexPath.row]
 
@@ -409,11 +438,26 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
             cell.imageView?.image = tio.thumbnailImage
         }else{
             cell.imageView?.image = resizeImage(image: (cell.imageView?.image)!, targetSize: CGSize(width: 90.0, height: 60.0))
-        }
+        }*/
+        cell.delegate = self
+        cell.configureCell(self.list[indexPath.row])
+        cell.imageView?.image = self.list[indexPath.row].thumbnailImage
+        cell.selectionStyle = UITableViewCellSelectionStyle.none
         
         return cell
     }
     
+    func swipeBeginInCell(_ cell: PKSwipeTableViewCell) {
+        oldStoredCell = cell
+    }
+    
+    func swipeDoneOnPreviousCell() -> PKSwipeTableViewCell? {
+        guard let cell = oldStoredCell else {
+            return nil
+        }
+        return cell
+    }
+
     
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {

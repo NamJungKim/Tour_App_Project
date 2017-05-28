@@ -17,4 +17,15 @@ class TourIO{
     var addr : String?
  
     var thumbnailImage : UIImage?
+    
+    var imageString : String?
+    
+    var contentid : String?
+    
+    var flag : Bool?
+    
+    init() {
+        imageString = "black_star"
+        flag = false
+    }
 }

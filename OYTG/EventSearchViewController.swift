@@ -8,20 +8,15 @@
 
 import Foundation
 import UIKit
-class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPickerViewDelegate,XMLParserDelegate, UITableViewDataSource{
+class EventSearchViewController : UIViewController, UIPickerViewDataSource, UIPickerViewDelegate,XMLParserDelegate, UITableViewDataSource{
     
     @IBOutlet var moreBtn: UIButton!
     @IBOutlet weak var areaTextField : UITextField!
     @IBOutlet var detailAreaTextField: UITextField!
-    @IBOutlet var largeThemaTextField: UITextField!
-    @IBOutlet var midThemaTextField: UITextField!
-    @IBOutlet var smallThemaTextField: UITextField!
-    @IBOutlet var keword: UITextField!
-    
-    
-    let city = CityData()
-    let thema = ThemaData()
-    
+    @IBOutlet var startTextField: UITextField!
+    @IBOutlet var endTextField: UITextField!
+    var startDatePicker : UIDatePicker!
+    var endDatePicker : UIDatePicker!
     //텍스트 필드를 완료 안누르고 다른 텍스트 필드를 누르면 적용되는걸 방지
     var selectRowForCity : Int = 0
     var selectRowForDetail = 0
@@ -29,6 +24,9 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
     var selectRowForMidThema = 0
     var selectRowForSmallThema = 0
     var flagForPickup = 0
+    var startDate = ""
+    var endDate = ""
+    
     
     var url : String = ""
     var page = 1
@@ -46,38 +44,43 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
         return datalist
     }()
     var tio : TourIO?
+    let city = CityData()
     
     fileprivate var oldStoredCell:PKSwipeTableViewCell?
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         //textfield 초기화
         areaTextField.text = "도/시 전체"
         detailAreaTextField.text = "시/구 전체"
-        largeThemaTextField.text = "대분류 전체"
-        midThemaTextField.text = "중분류 전체"
-        smallThemaTextField.text = "소분류 전체"
+        startTextField.text = "시작 날짜"
+        endTextField.text = "종료 날짜"
+        
         //어느 텍스트 필드가 클릭되었는지 flag변경하는 메소드 추가
-        areaTextField.addTarget(self, action: #selector(TourSearchViewController.flagForPickupWithArea), for: UIControlEvents.touchDown)
-        detailAreaTextField.addTarget(self,action: #selector(TourSearchViewController.flagForPickupWithDetail), for: UIControlEvents.touchDown)
-        largeThemaTextField.addTarget(self, action: #selector(TourSearchViewController.flagForPickupWithLarge), for: UIControlEvents.touchDown)
-        midThemaTextField.addTarget(self, action: #selector(TourSearchViewController.flagForPickupWithMid), for: UIControlEvents.touchDown)
-        smallThemaTextField.addTarget(self, action: #selector(TourSearchViewController.flagForPickupWithSmall), for: UIControlEvents.touchDown)
+        areaTextField.addTarget(self, action:
+            #selector(EventSearchViewController.flagForPickupWithArea), for: UIControlEvents.touchDown)
+        detailAreaTextField.addTarget(self,action:
+            #selector(EventSearchViewController.flagForPickupWithDetail), for: UIControlEvents.touchDown)
+        
+        //날짜 바꾸면 눈에 보이게 텍스트 변경하는 method
+        startTextField.addTarget(self, action: #selector(EventSearchViewController.flagForPickupWithStart), for: UIControlEvents.touchDown)
+        endTextField.addTarget(self, action:
+            #selector(EventSearchViewController.flagForPickupWithEnd), for: UIControlEvents.touchDown)
+        
+        startDatePicker = UIDatePicker()
+        endDatePicker = UIDatePicker()
+        
         //텍스트 필트 pickupView에 툴바 추가
         addToolBar(areaTextField,1)
         addToolBar(detailAreaTextField,2)
-        addToolBar(largeThemaTextField, 3)
-        addToolBar(midThemaTextField, 4)
-        addToolBar(smallThemaTextField, 5)
+        addToolBar2(startTextField, 3)
+        addToolBar2(endTextField, 4)
+        
         moreBtn.isHidden = true
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        if url != "" {
-            self.list = []
-            beginParsing(url)
-        }
     }
     
     //어느 텍스트 필드가 클릭되었는지 flag변경하는 메소드
@@ -87,15 +90,14 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
     func flagForPickupWithDetail(){
         flagForPickup = 2
     }
-    func flagForPickupWithLarge(){
+    func flagForPickupWithStart(){
         flagForPickup = 3
     }
-    func flagForPickupWithMid(){
+    func flagForPickupWithEnd(){
         flagForPickup = 4
     }
-    func flagForPickupWithSmall(){
-        flagForPickup = 5
-    }
+    
+    
     //pickupView에 적용되는 툴바 추가하는 메소드
     func addToolBar(_ textField : UITextField,_ flagCount : Int){
         let pickerView = UIPickerView()
@@ -103,7 +105,7 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
         pickerView.delegate = self
         
         textField.inputView = pickerView
-    
+        
         let toolBar = UIToolbar(frame: CGRect(x: 0, y: self.view.frame.size.height/6, width: self.view.frame.size.width, height: 40.0))
         toolBar.layer.position = CGPoint(x: self.view.frame.size.width/2, y: self.view.frame.size.height-20.0)
         toolBar.barStyle = UIBarStyle.default
@@ -128,12 +130,11 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
         }else if flagCount == 2{
             label.text = "시/구 선택"
         }else if flagCount == 3{
-            label.text = "대분류 선택"
+            label.text = "시작 날짜"
         }else if flagCount == 4{
-            label.text = "중분류 선택"
-        }else if flagCount == 5{
-            label.text = "소분류 선택"
+            label.text = "종료 날짜"
         }
+        
         label.textAlignment = NSTextAlignment.center
         
         let textBtn = UIBarButtonItem(customView: label)
@@ -142,6 +143,62 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
         
         textField.inputAccessoryView = toolBar
     }
+    func addToolBar2(_ textField : UITextField,_ flagCount : Int){
+        //pickerView.delegate = self
+        
+        if flagCount == 3{
+            startDatePicker.datePickerMode = UIDatePickerMode.date
+            textField.inputView = startDatePicker
+        }else{
+            endDatePicker.datePickerMode = UIDatePickerMode.date
+            if startDate != ""{
+                textField.inputView = endDatePicker
+            }else{
+                let pickerView = UIPickerView()
+                pickerView.delegate = self
+                textField.inputView = pickerView
+            }
+        }
+        
+        
+        let toolBar = UIToolbar(frame: CGRect(x: 0, y: self.view.frame.size.height/6, width: self.view.frame.size.width, height: 40.0))
+        toolBar.layer.position = CGPoint(x: self.view.frame.size.width/2, y: self.view.frame.size.height-20.0)
+        toolBar.barStyle = UIBarStyle.default
+        toolBar.tintColor = UIColor.blue
+        //toolBar.backgroundColor = UIColor.black
+        
+        
+        let defaultButton = UIBarButtonItem(title: "취소", style: UIBarButtonItemStyle.plain, target: self, action: #selector(TourSearchViewController.tappedToolBarBtn))
+        let doneButton = UIBarButtonItem(title: "완료", style: UIBarButtonItemStyle.plain, target: self, action: #selector(TourSearchViewController.donePressed))
+        //let doneButton2 = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.done, target: self, action: #selector(nextViewController.donePressed))
+        
+        let flexSpace = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.flexibleSpace, target: self, action: nil)
+        let label = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width / 3, height: self.view.frame.size.height))
+        
+        label.font = UIFont(name: "Helvetica", size: 18)
+        
+        label.backgroundColor = UIColor.clear
+        
+        label.textColor = UIColor.black
+        if flagCount == 1{
+            label.text = "도/시 선택"
+        }else if flagCount == 2{
+            label.text = "시/구 선택"
+        }else if flagCount == 3{
+            label.text = "시작 날짜"
+        }else if flagCount == 4{
+            label.text = "종료 날짜"
+        }
+        
+        label.textAlignment = NSTextAlignment.center
+        
+        let textBtn = UIBarButtonItem(customView: label)
+        
+        toolBar.setItems([defaultButton,flexSpace,textBtn,flexSpace,doneButton],animated: true)
+        
+        textField.inputAccessoryView = toolBar
+    }
+
     //pickupView에서 취소버튼이 클릭되면 호출되는 메소드
     func tappedToolBarBtn(sender: UIBarButtonItem) {
         if flagForPickup == 1{
@@ -151,11 +208,9 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
             //detailAreaTextField.text = "전체"
             detailAreaTextField.resignFirstResponder()
         }else if flagForPickup == 3{
-            largeThemaTextField.resignFirstResponder()
+            startTextField.resignFirstResponder()
         }else if flagForPickup == 4{
-            midThemaTextField.resignFirstResponder()
-        }else if flagForPickup == 5{
-            smallThemaTextField.resignFirstResponder()
+            endTextField.resignFirstResponder()
         }
     }
     //pickupView에서 완료버튼이 클릭되면 호출되는 메소드
@@ -176,32 +231,59 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
             }
             detailAreaTextField.resignFirstResponder()
         }else if flagForPickup == 3{
-            selectRowForMidThema = 0
-            selectRowForSmallThema = 0
-            let pickerView = UIPickerView()
-            pickerView.delegate = self
-            midThemaTextField.inputView = pickerView
-            smallThemaTextField.inputView = pickerView
-            largeThemaTextField.resignFirstResponder()
-            largeThemaTextField.text = thema.largeThema[selectRowForLargeThema]
-            midThemaTextField.text = thema.midThema[selectRowForLargeThema][0]
-            smallThemaTextField.text = thema.smallThema[selectRowForLargeThema][selectRowForMidThema][0]
-        }else if flagForPickup == 4{
-            if selectRowForLargeThema != 0{
-                selectRowForSmallThema = 0
-                let pickerView = UIPickerView()
-                pickerView.delegate = self
-                smallThemaTextField.inputView = pickerView
-                midThemaTextField.text = thema.midThema[selectRowForLargeThema][selectRowForMidThema]
-                smallThemaTextField.text = thema.smallThema[selectRowForLargeThema][selectRowForMidThema][0]
+            let componenets = Calendar.current.dateComponents([.year, .month, .day], from: startDatePicker.date)
+            let year = String(describing: componenets.year!)
+            var month = ""
+            var day = ""
+            if componenets.month! < 10{
+                month = "0"+String(describing: componenets.month!)
+            }else{
+                month = String(describing: componenets.month!)
             }
-            midThemaTextField.resignFirstResponder()
-        }else if flagForPickup == 5{
-            if selectRowForLargeThema != 0 && selectRowForMidThema != 0{
-                smallThemaTextField.text = thema.smallThema[selectRowForLargeThema][selectRowForMidThema][selectRowForSmallThema]
+            if componenets.day! < 10{
+                day = "0"+String(describing: componenets.day!)
+            }else{
+                day = String(describing: componenets.day!)
             }
-            smallThemaTextField.resignFirstResponder()
+            startDate = year+month+day
+            
+            let dateFormatter = DateFormatter()
+            
+            dateFormatter.dateStyle = DateFormatter.Style.medium
+            
+            dateFormatter.timeStyle = DateFormatter.Style.none
+            
+            startTextField.text = dateFormatter.string(from: startDatePicker.date)
 
+            startTextField.resignFirstResponder()
+            
+            endTextField.inputView = endDatePicker
+        }else if flagForPickup == 4{
+            let componenets = Calendar.current.dateComponents([.year, .month, .day], from: endDatePicker.date)
+            let year = String(describing: componenets.year!)
+            var month = ""
+            var day = ""
+            if componenets.month! < 10{
+                month = "0"+String(describing: componenets.month!)
+            }else{
+                month = String(describing: componenets.month!)
+            }
+            if componenets.day! < 10{
+                day = "0"+String(describing: componenets.day!)
+            }else{
+                day = String(describing: componenets.day!)
+            }
+            endDate = year+month+day
+            
+            let dateFormatter = DateFormatter()
+            
+            dateFormatter.dateStyle = DateFormatter.Style.medium
+            
+            dateFormatter.timeStyle = DateFormatter.Style.none
+            
+            endTextField.text = dateFormatter.string(from: endDatePicker.date)
+
+            endTextField.resignFirstResponder()
         }
     }
     
@@ -219,21 +301,10 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
                 return 1
             }
             return city.detail[selectRowForCity].count
-        }else if flagForPickup == 3{
-            return thema.largeThema.count
         }else if flagForPickup == 4{
-            if selectRowForLargeThema == 0{
-                return 1
-            }
-            return thema.midThema[selectRowForLargeThema].count
-        }else if flagForPickup == 5{
-            if selectRowForLargeThema == 0 || selectRowForMidThema == 0{
-                return 1
-            }
-            return thema.smallThema[selectRowForLargeThema][selectRowForMidThema].count
-        }else{
-            return 0
+            return 1
         }
+        return 0
     }
     //각 행의 대한 제목
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
@@ -245,22 +316,10 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
                 return city.detail[0][0]
             }
             return city.detail[selectRowForCity][row]
-        }
-        else if flagForPickup == 3{
-            return thema.largeThema[row]
         }else if flagForPickup == 4{
-            if selectRowForLargeThema == 0 {
-                return thema.midThema[selectRowForLargeThema][0]
-            }
-            return thema.midThema[selectRowForLargeThema][row]
-        }else if flagForPickup == 5{
-            if selectRowForLargeThema == 0 || selectRowForMidThema == 0{
-                return thema.smallThema[selectRowForLargeThema][selectRowForMidThema][0]
-            }
-            return thema.smallThema[selectRowForLargeThema][selectRowForMidThema][row]
-        }else{
-            return ""
+            return "시작날짜를 선택해주세요."
         }
+        return "no title"
     }
     //행이 선택될때 텍스트필드를 업데이트
     //문제점 - 피커뷰를 돌린후 다른 row의 양이 적은 피커뷰를 돌리지않고 그냥 완료만 했을시 row값이 갱신되지 않아 overflow발생
@@ -272,33 +331,18 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
             selectRowForCity = row
         case 2:
             selectRowForDetail = row
-        case 3:
-            selectRowForLargeThema = row
-        case 4:
-            selectRowForMidThema = row
-        case 5:
-            selectRowForSmallThema = row
         default:
             break
         }
     }
     @IBAction func onSearch(_ sender: Any) {
+        url = "http://api.visitkorea.or.kr/openapi/service/rest/KorService/searchFestival?serviceKey=ex%2FH5GN%2BB21X%2B87vYrBxFYdAWSz1cWxgQQDDW9lEeckwagijgq6opR6MlhGxE%2Bth5ydwv1SV%2FVhyd1FpFOlC8g%3D%3D&MobileOS=IOS&MobileApp=OYTG"
         var cityString = ""
         var sigunString = ""
-        var largeThemaString = ""
-        var midThemaString = ""
-        var smallThemaString = ""
+        var eventStartDate = ""
+        var eventEndDate = ""
         self.list = []
-        let kewordString = "&keyword="+keword.text!
         
-        if kewordString == "&keyword="{
-            url = "http://api.visitkorea.or.kr/openapi/service/rest/KorWithService/areaBasedList?serviceKey=ex%2FH5GN%2BB21X%2B87vYrBxFYdAWSz1cWxgQQDDW9lEeckwagijgq6opR6MlhGxE%2Bth5ydwv1SV%2FVhyd1FpFOlC8g%3D%3D&MobileOS=IOS&MobileApp=OYTG&numOfRows=10"
-        }else{
-            url = "http://api.visitkorea.or.kr/openapi/service/rest/KorWithService/searchKeyword?serviceKey=ex%2FH5GN%2BB21X%2B87vYrBxFYdAWSz1cWxgQQDDW9lEeckwagijgq6opR6MlhGxE%2Bth5ydwv1SV%2FVhyd1FpFOlC8g%3D%3D&MobileOS=IOS&MobileApp=OYTG&numOfRows=10"
-            let param = kewordString
-            let encodedParam = param.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)
-            url += encodedParam!
-        }
         if selectRowForCity != 0{
             cityString = "&areaCode=" + String(city.cityCode[selectRowForCity])
             url += cityString
@@ -307,28 +351,21 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
                 url += sigunString
             }
         }
-        if selectRowForLargeThema != 0{
-            largeThemaString = "&cat1=" + String(thema.largeCode[selectRowForLargeThema])
-            url += largeThemaString
-            if selectRowForMidThema != 0{
-                midThemaString = "&cat2=" + String(thema.midCode[selectRowForLargeThema][selectRowForMidThema])
-                url += midThemaString
-                if selectRowForSmallThema != 0{
-                    smallThemaString = "&cat3=" + String(thema.smallCode[selectRowForLargeThema][selectRowForMidThema][selectRowForSmallThema])
-                    url += smallThemaString
-                }
-            }
+        if startDate != ""{
+            eventStartDate = "&eventStartDate="+startDate
+            url += eventStartDate
+        }
+        if endDate != ""{
+            eventEndDate = "&eventEndDate="+endDate
+            url += eventEndDate
         }
         beginParsing(url)
-        if self.list.count <= totalCount{
-            moreBtn.isHidden = false
-        }
     }
     
     @IBAction func moreButton(_ sender: Any) {
-            self.page += 1
-            let url = self.url+"&pageNo="+String(self.page)
-            beginParsing(url)
+        self.page += 1
+        let url = self.url+"&pageNo="+String(self.page)
+        beginParsing(url)
     }
     
     
@@ -342,7 +379,7 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
         }
         tbData!.reloadData()
         
-
+        
     }
     
     func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?,qualifiedName qName: String?, attributes attributeDict: [String : String]){
@@ -361,11 +398,12 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
             tio?.contentid = ""
             tio?.imageString = String()
             tio?.imageString = ""
+            tio?.whereAddress = true
         }
     }
     
     func parser(_ parser: XMLParser, foundCharacters string: String) {
-    
+        
         if element.isEqual(to: "title"){
             tio?.title?.append(string)
         }else if element.isEqual(to: "addr1"){
@@ -378,13 +416,16 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
             tio?.thumbnailImage = resizeImage(image: (tio?.thumbnailImage)!, targetSize: CGSize(width: 90.0, height: 60.0))
         }else if element.isEqual(to: "totalCount"){
             totalCount = Int(string)!
+            if self.list.count <= totalCount{
+                moreBtn.isHidden = false
+            }
         }else if element.isEqual(to: "contentid"){
             tio?.contentid?.append(string)
             let count = UserDefaults.standard.integer(forKey: "count")
-            for index in 1..<count{
+            for index in 0..<count{
                 let i = String(index)
                 let char : String = UserDefaults.standard.object(forKey: i) as! String
-                if char == string{
+                if char.substring(to: char.index(char.endIndex, offsetBy: -5)) == string{
                     tio?.imageString = "yellow_star"
                     tio?.flag = true
                     break
@@ -426,22 +467,25 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "tourSearchCell")! as! CustomTableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "eventSearchCell")! as! CustomTableViewCell
         /*if cell.isEqual(NSNull.self) {
-            cell = Bundle.main.loadNibNamed("tourSearchCell", owner: self, options: nil)?[0] as! CustomTableViewCell
-        }
-        let tio = self.list[indexPath.row]
-
-        cell.textLabel?.text = tio.title
-        cell.detailTextLabel?.text = tio.addr
-        if tio.thumbnailImage != nil{
-            cell.imageView?.image = tio.thumbnailImage
-        }else{
-            cell.imageView?.image = resizeImage(image: (cell.imageView?.image)!, targetSize: CGSize(width: 90.0, height: 60.0))
-        }*/
+         cell = Bundle.main.loadNibNamed("tourSearchCell", owner: self, options: nil)?[0] as! CustomTableViewCell
+         }
+         let tio = self.list[indexPath.row]
+         
+         cell.textLabel?.text = tio.title
+         cell.detailTextLabel?.text = tio.addr
+         if tio.thumbnailImage != nil{
+         cell.imageView?.image = tio.thumbnailImage
+         }else{
+         cell.imageView?.image = resizeImage(image: (cell.imageView?.image)!, targetSize: CGSize(width: 90.0, height: 60.0))
+         }*/
         cell.delegate = self
         cell.configureCell(self.list[indexPath.row])
-        cell.imageView?.image = self.list[indexPath.row].thumbnailImage
+        if self.list[indexPath.row].thumbnailImage == nil{
+            self.list[indexPath.row].thumbnailImage = resizeImage(image: UIImage(named: "noimage")!, targetSize: CGSize(width: 90.0, height: 60.0))
+        }
+        cell.tourImage.image = self.list[indexPath.row].thumbnailImage
         cell.selectionStyle = UITableViewCellSelectionStyle.none
         
         return cell
@@ -457,7 +501,7 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
         }
         return cell
     }
-
+    
     
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -467,17 +511,11 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
         if detailAreaTextField.isEditing{
             detailAreaTextField.resignFirstResponder()
         }
-        if largeThemaTextField.isEditing{
-            largeThemaTextField.resignFirstResponder()
+        if startTextField.isEditing{
+            startTextField.resignFirstResponder()
         }
-        if midThemaTextField.isEditing{
-            midThemaTextField.resignFirstResponder()
-        }
-        if smallThemaTextField.isEditing{
-            smallThemaTextField.resignFirstResponder()
-        }
-        if keword.isEditing{
-            keword.resignFirstResponder()
+        if endTextField.isEditing{
+            endTextField.resignFirstResponder()
         }
     }
 }

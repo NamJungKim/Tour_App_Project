@@ -24,6 +24,8 @@ class TourIO{
     
     var flag : Bool?
     
+    var whereAddress = false //무장애인지,국문여행정보인지 무장애면 false 국문여행정보면 true
+    
     init() {
         imageString = "black_star"
         flag = false

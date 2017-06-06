@@ -17,10 +17,6 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         // Do any additional setup after loading the view, typically from a nib.
         self.pickerView.dataSource = self
         self.pickerView.delegate = self
-        if !UserDefaults.standard.bool(forKey: "iscount"){
-            UserDefaults.standard.set(true, forKey: "iscount")
-            UserDefaults.standard.set(1, forKey: "count")
-        }
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -54,11 +50,6 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "segueToTableView"{
-            //if let navController = segue.destination as? UINavigationController{
-                /*if let hospitalTableViewController = navController.topViewController as? HospitalTableViewController{
-                    hospitalTableViewController.url += sgguCd
-                }*/
-            //}
         }
     }
     
@@ -69,9 +60,11 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         if flag == 0 {
             self.performSegue(withIdentifier: "segueToTour", sender: self)
         }else if flag == 1{
-            self.performSegue(withIdentifier: "segueToFestival", sender: self)
-        }else{
+            self.performSegue(withIdentifier: "segueToEvent", sender: self)
+        }else if flag == 2{
             self.performSegue(withIdentifier: "segueToHotel", sender: self)
+        }else{
+            self.performSegue(withIdentifier: "segueToArea", sender: self)
         }
     }
 }

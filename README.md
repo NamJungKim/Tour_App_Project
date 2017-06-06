@@ -41,5 +41,7 @@
 <li>swipe하면 별표시가 나타나고 클릭하면 노란색으로 바뀌면서 즐겨찾기 탭에 item 추가 됨</li>
 <li>즐겨찾기란에 추가하거나 삭제할 때 data가 갱신 안되던 문제를 생명주기와 barbtn을 사용해 해결</li>
 <li>picker view의 문제 발견. picker view의 회전이 멈추기전에 다음페이지로 이동을 누르면 row값 적용이 안됨</li>
-<li>약간의 로딩을 줄 예정</li>
+<li>약간의 로딩을 줄 예정</li></ul></p>
 
+# Nine Commit - 2017.06.06
+<p><ul><li>행사,숙박,위치기반 Search Page 추가 완료</li>

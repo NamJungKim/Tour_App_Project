@@ -1,95 +1,109 @@
 //
-//  FavoriteViewController.swift
+//  AreaViewController.swift
 //  OYTG
 //
-//  Created by 김남정 on 2017. 5. 29..
+//  Created by 김남정 on 2017. 6. 6..
 //  Copyright © 2017년 NamJung. All rights reserved.
 //
 
+import Foundation
 import UIKit
+import CoreLocation
 
-class FavoriteViewController : UITableViewController,XMLParserDelegate{
+class AreaViewController : UIViewController,XMLParserDelegate, UITableViewDataSource,CLLocationManagerDelegate{
     
-    var parser = XMLParser()
-    var element = NSString()
-    var tio : TourIO?
-    let urlfalse : String = "http://api.visitkorea.or.kr/openapi/service/rest/KorWithService/detailCommon?serviceKey=ex%2FH5GN%2BB21X%2B87vYrBxFYdAWSz1cWxgQQDDW9lEeckwagijgq6opR6MlhGxE%2Bth5ydwv1SV%2FVhyd1FpFOlC8g%3D%3D&MobileOS=IOS&MobileApp=OYTG&defaultYN=Y&firstImageYN=Y&addrinfoYN=Y&contentId="
-    let urltrue : String = "http://api.visitkorea.or.kr/openapi/service/rest/KorService/detailCommon?serviceKey=ex%2FH5GN%2BB21X%2B87vYrBxFYdAWSz1cWxgQQDDW9lEeckwagijgq6opR6MlhGxE%2Bth5ydwv1SV%2FVhyd1FpFOlC8g%3D%3D&MobileOS=IOS&MobileApp=OYTG&defaultYN=Y&firstImageYN=Y&addrinfoYN=Y&contentId="
+    @IBOutlet var moreBtn: UIButton!
+    
+    @IBOutlet var keword: UITextField!
+    
+    var locationManager:CLLocationManager!
+    
+    //텍스트 필드를 완료 안누르고 다른 텍스트 필드를 누르면 적용되는걸 방지
+    var url : String = ""
+    var latitude = ""
+    var longitude = ""
+    var page = 1
+    var totalCount = 0
     @IBOutlet var tbData: UITableView!
-    var contentid : [String] = []
+    
+    //xml파일을 다운로드 및 파싱하는 오브젝트
+    var parser = XMLParser()
+    
+    var element = NSString()
+    //저장 문자열 변수
+    
     var list : [TourIO] = {
         var datalist = [TourIO]()
         return datalist
     }()
+    var tio : TourIO?
     
     fileprivate var oldStoredCell:PKSwipeTableViewCell?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        var color : UIColor!
-        if UserDefaults.standard.object(forKey: "theme") != nil{
-            let char = UserDefaults.standard.object(forKey: "theme") as! String
-            
-            if char == "emerald"{
-                color = ThemeColor().emerald
-                self.navigationController?.navigationBar.barTintColor = color //네이게이션바 배경색
-                self.tabBarController?.tabBar.barTintColor = color //탭바 배경색
-            }else if char == "hanuel"{
-                color = ThemeColor().hanuel
-                self.navigationController?.navigationBar.barTintColor = color
-                self.tabBarController?.tabBar.barTintColor = color
-            }else if char == "whiteBlack"{
-                color = ThemeColor().whiteGray
-                self.navigationController?.navigationBar.barTintColor = color
-                self.tabBarController?.tabBar.barTintColor = color
-            }else if char == "yellow"{
-                color = ThemeColor().yellow
-                self.navigationController?.navigationBar.barTintColor = color
-                self.tabBarController?.tabBar.barTintColor = color
-            }else if char == "brown"{
-                color = ThemeColor().brown
-                self.navigationController?.navigationBar.barTintColor = color
-                self.tabBarController?.tabBar.barTintColor = color
-            }else if char == "white"{
-                color = ThemeColor().white
-                self.navigationController?.navigationBar.barTintColor = color
-                self.tabBarController?.tabBar.barTintColor = color
-            }else if char == "darkBlack"{
-                color = ThemeColor().darkGray
-                self.navigationController?.navigationBar.barTintColor = color
-                self.tabBarController?.tabBar.barTintColor = color
-            }
-        }
-        self.tabBarController?.tabBar.tintColor = UIColor.black //탭바아이템 클릭된 아이템 색
-        self.tabBarController?.tabBar.unselectedItemTintColor = UIColor.gray //탭바아이템 클릭안된 아이템 색
         
-        reload()
+        locationManager = CLLocationManager()
+        locationManager.delegate = self
+        locationManager.requestWhenInUseAuthorization() //권한 요청
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.startUpdatingLocation()
+        
+        moreBtn.isHidden = true
     }
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        reload()
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        //위치가 업데이트될때마다
+        if let coor = manager.location?.coordinate{
+            latitude = String(coor.latitude)
+            longitude = String(coor.longitude)
+        }
     }
     
-    func reload(){
-        list = []
-        let cnt = UserDefaults.standard.integer(forKey: "count")
-        for index in 0..<cnt{
-            let char = UserDefaults.standard.object(forKey: String(index)) as! String
-            //뒤의 5글자가 false면 무장애 여행정보 검색 아니면 국문여행정보 검색
-            if char.substring(to: char.index(char.startIndex, offsetBy: 5)) == "false"{
-                beginParsing(urlfalse+char.substring(to: char.index(char.endIndex, offsetBy: -5)))
-            }
-            else{
-                beginParsing(urltrue+char.substring(to: char.index(char.endIndex, offsetBy: -5)))
-            }
-        }
-        tbData!.reloadData()
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
     }
+    @IBAction func onSearch(_ sender: Any) {
+        url = "http://api.visitkorea.or.kr/openapi/service/rest/KorService/locationBasedList?serviceKey=ex%2FH5GN%2BB21X%2B87vYrBxFYdAWSz1cWxgQQDDW9lEeckwagijgq6opR6MlhGxE%2Bth5ydwv1SV%2FVhyd1FpFOlC8g%3D%3D&MobileOS=IOS&MobileApp=OYTG"
+        url += "&mapX="+longitude
+        url += "&mapY="+latitude
+        if Int(keword.text!) == nil{
+            showAlert(title: "입력 에러", message: "거리를 입력해주세요.")
+            return
+        }
+        url += "&radius="+keword.text!
+        self.list = []
+        keword.resignFirstResponder()
+        beginParsing(url)
+    }
+    
+    func showAlert(title: String,message: String){
+        
+        let alertController = UIAlertController(title: title+"\n", message: message, preferredStyle: UIAlertControllerStyle.alert)
+        
+        let defaultAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        alertController.addAction(defaultAction)
+        
+        present(alertController, animated: true, completion: nil)
+    }
+
+    
+    @IBAction func moreButton(_ sender: Any) {
+        self.page += 1
+        let url = self.url+"&pageNo="+String(self.page)
+        beginParsing(url)
+    }
+    
+    
     
     func beginParsing(_ url : String){
         parser = XMLParser(contentsOf:(URL(string:url))!)!
         parser.delegate = self
         parser.parse()
+        if self.list.count >= totalCount{
+            self.moreBtn.isHidden = true
+        }
+        tbData!.reloadData()
     }
     
     func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?,qualifiedName qName: String?, attributes attributeDict: [String : String]){
@@ -107,8 +121,7 @@ class FavoriteViewController : UITableViewController,XMLParserDelegate{
             tio?.contentid = String()
             tio?.contentid = ""
             tio?.imageString = String()
-            tio?.imageString = "yellow_star"
-            tio?.flag = true
+            tio?.imageString = ""
         }
     }
     
@@ -124,11 +137,26 @@ class FavoriteViewController : UITableViewController,XMLParserDelegate{
             let imageData = try! Data(contentsOf: url)
             tio?.thumbnailImage = UIImage(data: imageData)
             tio?.thumbnailImage = resizeImage(image: (tio?.thumbnailImage)!, targetSize: CGSize(width: 90.0, height: 60.0))
+        }else if element.isEqual(to: "totalCount"){
+            totalCount = Int(string)!
+            if self.list.count <= totalCount{
+                moreBtn.isHidden = false
+            }
         }else if element.isEqual(to: "contentid"){
             tio?.contentid?.append(string)
+            let count = UserDefaults.standard.integer(forKey: "count")
+            for index in 0..<count{
+                let i = String(index)
+                let char : String = UserDefaults.standard.object(forKey: i) as! String
+                if char.substring(to: char.index(char.endIndex, offsetBy: -5)) == string{
+                    tio?.imageString = "yellow_star"
+                    tio?.flag = true
+                    break
+                }
+            }
+            
         }
     }
-    
     func resizeImage(image: UIImage, targetSize: CGSize) -> UIImage {
         
         // Figure out what our orientation is, and use that to form the rectangle
@@ -152,16 +180,17 @@ class FavoriteViewController : UITableViewController,XMLParserDelegate{
         }
     }
     
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.list.count
     }
     
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat
+    {
         return 60.0
     }
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "favoriteCell")! as! CustomTableViewCell
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "areaSearchCell")! as! CustomTableViewCell
         /*if cell.isEqual(NSNull.self) {
          cell = Bundle.main.loadNibNamed("tourSearchCell", owner: self, options: nil)?[0] as! CustomTableViewCell
          }
@@ -175,7 +204,6 @@ class FavoriteViewController : UITableViewController,XMLParserDelegate{
          cell.imageView?.image = resizeImage(image: (cell.imageView?.image)!, targetSize: CGSize(width: 90.0, height: 60.0))
          }*/
         cell.delegate = self
-        cell.configureCell(self.list[indexPath.row])
         cell.configureCell(self.list[indexPath.row])
         if self.list[indexPath.row].thumbnailImage == nil{
             self.list[indexPath.row].thumbnailImage = resizeImage(image: UIImage(named: "noimage")!, targetSize: CGSize(width: 90.0, height: 60.0))
@@ -196,8 +224,8 @@ class FavoriteViewController : UITableViewController,XMLParserDelegate{
         }
         return cell
     }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        keword.resignFirstResponder()    }
 
-    @IBAction func refreshBtn(_ sender: Any) {
-        reload()
-    }
 }

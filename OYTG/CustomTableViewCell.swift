@@ -88,14 +88,17 @@ class CustomTableViewCell: PKSwipeTableViewCell{
         tio?.flag = !((tio?.flag)!)
         let count = UserDefaults.standard.integer(forKey: "count")
         if ((tio?.flag)! == true){
-            UserDefaults.standard.set(tio?.contentid, forKey: String(count))
-            UserDefaults.standard.set("0", forKey: String(count+1))
+            if tio?.whereAddress == false{
+                UserDefaults.standard.set((tio?.contentid)!+"false", forKey: String(count))
+            }else{
+                UserDefaults.standard.set((tio?.contentid)!+"+true", forKey: String(count))
+            }
             UserDefaults.standard.set(count+1, forKey: "count")
             tio?.imageString = "yellow_star"
         }else{
             tio?.flag = false
             tio?.imageString = "black_star"
-            for index in 1..<count{
+            for index in 0..<count{
                 let char = UserDefaults.standard.object(forKey: String(index)) as! String
                 if (tio?.contentid)! == char{
                     for i in index..<count{

@@ -18,8 +18,11 @@ class HotelSearchViewController : UIViewController, UIPickerViewDataSource, UIPi
     @IBOutlet var beniSwitch: UISwitch!
     @IBOutlet var etcSwitch: UISwitch!
     
+    @IBOutlet var moreLoding: UIActivityIndicatorView!
+    @IBOutlet var loading: UIActivityIndicatorView!
     let city = CityData()
     
+    @IBOutlet var searchBtn: UIButton!
     //텍스트 필드를 완료 안누르고 다른 텍스트 필드를 누르면 적용되는걸 방지
     var selectRowForCity : Int = 0
     var selectRowForDetail = 0
@@ -198,72 +201,100 @@ class HotelSearchViewController : UIViewController, UIPickerViewDataSource, UIPi
         }
     }
     @IBAction func onSearch(_ sender: Any) {
-        url = "http://api.visitkorea.or.kr/openapi/service/rest/KorService/searchStay?serviceKey=ex%2FH5GN%2BB21X%2B87vYrBxFYdAWSz1cWxgQQDDW9lEeckwagijgq6opR6MlhGxE%2Bth5ydwv1SV%2FVhyd1FpFOlC8g%3D%3D&MobileOS=IOS&MobileApp=OYTG"
-        var cityString = ""
-        var sigunString = ""
+        self.loading.startAnimating()
+        self.searchBtn.isEnabled = false
+        let when = DispatchTime.now() + 0.001 // change 2 to desired number of seconds
+        DispatchQueue.main.asyncAfter(deadline: when) {
+            self.url = "http://api.visitkorea.or.kr/openapi/service/rest/KorService/searchStay?serviceKey=ex%2FH5GN%2BB21X%2B87vYrBxFYdAWSz1cWxgQQDDW9lEeckwagijgq6opR6MlhGxE%2Bth5ydwv1SV%2FVhyd1FpFOlC8g%3D%3D&MobileOS=IOS&MobileApp=OYTG"
+            var cityString = ""
+            var sigunString = ""
         
-        self.list = []
+            self.list = []
         
-        if selectRowForCity != 0{
-            cityString = "&areaCode=" + String(city.cityCode[selectRowForCity])
-            url += cityString
-            if selectRowForDetail != 0{
-                sigunString = "&sigunguCode=" + String(selectRowForDetail)
-                url += sigunString
+        if self.selectRowForCity != 0{
+            cityString = "&areaCode=" + String(self.city.cityCode[self.selectRowForCity])
+            self.url += cityString
+            if self.selectRowForDetail != 0{
+                sigunString = "&sigunguCode=" + String(self.selectRowForDetail)
+                self.url += sigunString
             }
         }
         
-        if hanSwitch.isOn && beniSwitch.isOn && !goodSwitch.isOn && etcSwitch.isOn{
-            url+="&goodStay=0"
-        }else if hanSwitch.isOn && !beniSwitch.isOn && goodSwitch.isOn && etcSwitch.isOn {
-            url+="&benikia=0"
-        }else if !hanSwitch.isOn && beniSwitch.isOn && goodSwitch.isOn && etcSwitch.isOn {
-            url+="&hanOk=0"
-        }else if hanSwitch.isOn && !beniSwitch.isOn && !goodSwitch.isOn && etcSwitch.isOn {
-            url+="&benikia=0&goodStay=0"
-        }else if !hanSwitch.isOn && !beniSwitch.isOn && goodSwitch.isOn && etcSwitch.isOn {
-            url+="&hanOk=0&benikia=0"
-        }else if !hanSwitch.isOn && beniSwitch.isOn && !goodSwitch.isOn && etcSwitch.isOn {
-            url+="&hanOk=0&goodStay=0"
-        }else if !hanSwitch.isOn && !beniSwitch.isOn && !goodSwitch.isOn && etcSwitch.isOn {
-            url+="&hanOk=0&benikia=0&goodStay=0"
-        }else if hanSwitch.isOn && beniSwitch.isOn && !goodSwitch.isOn && !etcSwitch.isOn{
-            multiBeginParging(url+"&hanOk=1")
-            multiBeginParging(url+"&benikia=1")
-            tbData!.reloadData()
+        if self.hanSwitch.isOn && self.beniSwitch.isOn && !self.goodSwitch.isOn && self.etcSwitch.isOn{
+            self.url+="&goodStay=0"
+        }else if self.hanSwitch.isOn && !self.beniSwitch.isOn && self.goodSwitch.isOn && self.etcSwitch.isOn {
+            self.url+="&benikia=0"
+        }else if !self.hanSwitch.isOn && self.beniSwitch.isOn && self.goodSwitch.isOn && self.etcSwitch.isOn {
+            self.url+="&hanOk=0"
+        }else if self.hanSwitch.isOn && !self.beniSwitch.isOn && !self.goodSwitch.isOn && self.etcSwitch.isOn {
+            self.url+="&benikia=0&goodStay=0"
+        }else if !self.hanSwitch.isOn && !self.beniSwitch.isOn && self.goodSwitch.isOn && self.etcSwitch.isOn {
+            self.url+="&hanOk=0&benikia=0"
+        }else if !self.hanSwitch.isOn && self.beniSwitch.isOn && !self.goodSwitch.isOn && self.etcSwitch.isOn {
+            self.url+="&hanOk=0&goodStay=0"
+        }else if !self.hanSwitch.isOn && !self.beniSwitch.isOn && !self.goodSwitch.isOn && self.etcSwitch.isOn {
+            self.url+="&hanOk=0&benikia=0&goodStay=0"
+        }else if self.hanSwitch.isOn && self.beniSwitch.isOn && !self.goodSwitch.isOn && !self.etcSwitch.isOn{
+            self.multiBeginParging(self.url+"&hanOk=1")
+            self.multiBeginParging(self.url+"&benikia=1")
+            self.tbData!.reloadData()
             return
-        }else if hanSwitch.isOn && !beniSwitch.isOn && goodSwitch.isOn && !etcSwitch.isOn {
-            multiBeginParging(url+"&hanOk=1")
-            multiBeginParging(url+"&goodStay=1")
-            tbData!.reloadData()
+        }else if self.hanSwitch.isOn && !self.beniSwitch.isOn && self.goodSwitch.isOn && !self.etcSwitch.isOn {
+            self.multiBeginParging(self.url+"&hanOk=1")
+            self.multiBeginParging(self.url+"&goodStay=1")
+            self.tbData!.reloadData()
             return
-        }else if !hanSwitch.isOn && beniSwitch.isOn && goodSwitch.isOn && !etcSwitch.isOn {
-            multiBeginParging(url+"&goodStay=1")
-            multiBeginParging(url+"&benikia=1")
-            tbData!.reloadData()
+        }else if !self.hanSwitch.isOn && self.beniSwitch.isOn && self.goodSwitch.isOn && !self.etcSwitch.isOn {
+            self.multiBeginParging(self.url+"&goodStay=1")
+            self.multiBeginParging(self.url+"&benikia=1")
+            self.tbData!.reloadData()
             return
-        }else if hanSwitch.isOn && !beniSwitch.isOn && !goodSwitch.isOn && !etcSwitch.isOn {
-            url+="&hanOk=1"
-        }else if !hanSwitch.isOn && !beniSwitch.isOn && goodSwitch.isOn && !etcSwitch.isOn {
-            url+="&goodStay=1"
-        }else if !hanSwitch.isOn && beniSwitch.isOn && !goodSwitch.isOn && !etcSwitch.isOn {
-            url+="&benikia=1"
-        }else if !hanSwitch.isOn && !beniSwitch.isOn && !goodSwitch.isOn && !etcSwitch.isOn {
-            url+="&hanOk=1&benikia=1&goodStay=1"
+        }else if self.hanSwitch.isOn && !self.beniSwitch.isOn && !self.goodSwitch.isOn && !self.etcSwitch.isOn {
+            self.url+="&hanOk=1"
+        }else if !self.hanSwitch.isOn && !self.beniSwitch.isOn && self.goodSwitch.isOn && !self.etcSwitch.isOn {
+            self.url+="&goodStay=1"
+        }else if !self.hanSwitch.isOn && self.beniSwitch.isOn && !self.goodSwitch.isOn && !self.etcSwitch.isOn {
+            self.url+="&benikia=1"
+        }else if !self.hanSwitch.isOn && !self.beniSwitch.isOn && !self.goodSwitch.isOn && !self.etcSwitch.isOn {
+            self.url+="&hanOk=1&benikia=1&goodStay=1"
         }
         
-        beginParsing(url)
+        self.beginParsing(self.url)
+        if self.totalCount == 0{
+            self.showAlert(title: "결 과", message: "검색 결과가 없습니다." )
+        }
+            self.searchBtn.isEnabled = true
+        }
+    }
+    
+    func showAlert(title: String,message: String){
+        
+        let alertController = UIAlertController(title: title+"\n", message: message, preferredStyle: UIAlertControllerStyle.alert)
+        
+        let defaultAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        alertController.addAction(defaultAction)
+        
+        present(alertController, animated: true, completion: nil)
     }
     
     @IBAction func moreButton(_ sender: Any) {
-        self.page += 1
-        let url = self.url+"&pageNo="+String(self.page)
-        beginParsing(url)
+        self.moreLoding.startAnimating()
+        self.moreBtn.isHidden = true
+        let when = DispatchTime.now() + 0.001 // change 2 to desired number of seconds
+        DispatchQueue.main.asyncAfter(deadline: when) {
+
+            self.page += 1
+            let url = self.url+"&pageNo="+String(self.page)
+            self.beginParsing(self.url)
+            self.moreBtn.isEnabled = true
+            self.moreLoding.stopAnimating()
+        }
     }
     
     
     
     func beginParsing(_ url : String){
+        
         parser = XMLParser(contentsOf:(URL(string:url))!)!
         parser.delegate = self
         parser.parse()
@@ -271,6 +302,7 @@ class HotelSearchViewController : UIViewController, UIPickerViewDataSource, UIPi
             self.moreBtn.isHidden = true
         }
         tbData!.reloadData()
+        self.loading.stopAnimating()
     }
     
     func multiBeginParging(_ url : String){
@@ -358,7 +390,18 @@ class HotelSearchViewController : UIViewController, UIPickerViewDataSource, UIPi
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.list.count
+        if self.list.count == 0{
+            let emptyLabel = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.view.bounds.height))
+            emptyLabel.text = "원하는 지역과 숙박형태를 입력하시고\n검색버튼을 눌러주세요"
+            emptyLabel.textColor = UIColor.lightGray
+            emptyLabel.textAlignment = NSTextAlignment.center
+            emptyLabel.numberOfLines = 2
+            self.tbData.backgroundView = emptyLabel
+            self.tbData.separatorStyle = UITableViewCellSeparatorStyle.none
+            return 0
+        }else{
+            return self.list.count
+        }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat

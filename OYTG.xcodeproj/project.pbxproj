@@ -23,6 +23,8 @@
 		63C147AA1ECDBC8200E557E8 /* CityData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C147A91ECDBC8200E557E8 /* CityData.swift */; };
 		63C17D3E1EE6DABC001644D7 /* AreaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C17D3D1EE6DABC001644D7 /* AreaViewController.swift */; };
 		63C17D481EE6F755001644D7 /* ThemeColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C17D471EE6F755001644D7 /* ThemeColor.swift */; };
+		63C17D4C1EE7946B001644D7 /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C17D4B1EE7946B001644D7 /* SettingViewController.swift */; };
+		63C17D4E1EE79887001644D7 /* HeaderCellTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C17D4D1EE79887001644D7 /* HeaderCellTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -44,6 +46,8 @@
 		63C147A91ECDBC8200E557E8 /* CityData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CityData.swift; sourceTree = "<group>"; };
 		63C17D3D1EE6DABC001644D7 /* AreaViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AreaViewController.swift; sourceTree = "<group>"; };
 		63C17D471EE6F755001644D7 /* ThemeColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThemeColor.swift; sourceTree = "<group>"; };
+		63C17D4B1EE7946B001644D7 /* SettingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
+		63C17D4D1EE79887001644D7 /* HeaderCellTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeaderCellTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -104,6 +108,7 @@
 			isa = PBXGroup;
 			children = (
 				63172D171EDB744A00CE9957 /* FavoriteViewController.swift */,
+				63C17D4B1EE7946B001644D7 /* SettingViewController.swift */,
 				631F2FC21ECD8B5F00A2A3F5 /* ViewController.swift */,
 			);
 			name = tab;
@@ -125,6 +130,7 @@
 			children = (
 				6308FE421EDB37E400EB01E8 /* PKSwipeTableViewCell.swift */,
 				6308FE401EDB37B500EB01E8 /* CustomTableViewCell.swift */,
+				63C17D4D1EE79887001644D7 /* HeaderCellTableViewCell.swift */,
 			);
 			name = "custom cell";
 			sourceTree = "<group>";
@@ -207,6 +213,8 @@
 				631349C71EE6CD1A0076F05F /* HotelSearchViewController.swift in Sources */,
 				631F2FD31ECDA04F00A2A3F5 /* TourSearchViewController.swift in Sources */,
 				63C147AA1ECDBC8200E557E8 /* CityData.swift in Sources */,
+				63C17D4E1EE79887001644D7 /* HeaderCellTableViewCell.swift in Sources */,
+				63C17D4C1EE7946B001644D7 /* SettingViewController.swift in Sources */,
 				631F2FC31ECD8B5F00A2A3F5 /* ViewController.swift in Sources */,
 				63172D1A1EDBC60900CE9957 /* EventSearchViewController.swift in Sources */,
 				6308FE411EDB37B500EB01E8 /* CustomTableViewCell.swift in Sources */,

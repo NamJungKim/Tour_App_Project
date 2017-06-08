@@ -17,6 +17,34 @@ class ViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDele
         // Do any additional setup after loading the view, typically from a nib.
         self.pickerView.dataSource = self
         self.pickerView.delegate = self
+        var color : UIColor!
+        if UserDefaults.standard.object(forKey: "theme") != nil{
+            let char = UserDefaults.standard.string(forKey: "theme")
+            
+            if char == "Emerald"{
+                color = ThemeColor().emerald
+                self.navigationController?.navigationBar.barTintColor = color //네이게이션바 배경색
+            }else if char == "Sky"{
+                color = ThemeColor().hanuel
+                self.navigationController?.navigationBar.barTintColor = color
+            }else if char == "LightGray"{
+                color = ThemeColor().whiteGray
+                self.navigationController?.navigationBar.barTintColor = color
+            }else if char == "Yellow"{
+                color = ThemeColor().yellow
+                self.navigationController?.navigationBar.barTintColor = color
+            }else if char == "Brown"{
+                color = ThemeColor().brown
+                self.navigationController?.navigationBar.barTintColor = color
+            }else if char == "White"{
+                color = ThemeColor().white
+                self.navigationController?.navigationBar.barTintColor = color
+            }else if char == "DarkGray"{
+                color = ThemeColor().darkGray
+                self.navigationController?.navigationBar.barTintColor = color
+            }
+        }
+
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)

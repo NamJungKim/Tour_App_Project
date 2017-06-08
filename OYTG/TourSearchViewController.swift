@@ -17,8 +17,11 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
     @IBOutlet var midThemaTextField: UITextField!
     @IBOutlet var smallThemaTextField: UITextField!
     @IBOutlet var keword: UITextField!
+    @IBOutlet var loading: UIActivityIndicatorView!
+
+    @IBOutlet var searchBtn: UIButton!
     
-    
+    @IBOutlet var moreLoding: UIActivityIndicatorView!
     let city = CityData()
     let thema = ThemaData()
     
@@ -47,6 +50,9 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
     }()
     var tio : TourIO?
     
+    let refreshControl = UIRefreshControl()
+
+    
     fileprivate var oldStoredCell:PKSwipeTableViewCell?
 
     override func viewDidLoad() {
@@ -70,6 +76,8 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
         addToolBar(midThemaTextField, 4)
         addToolBar(smallThemaTextField, 5)
         moreBtn.isHidden = true
+        
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -280,63 +288,94 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
         }
     }
     @IBAction func onSearch(_ sender: Any) {
-        var cityString = ""
-        var sigunString = ""
-        var largeThemaString = ""
-        var midThemaString = ""
-        var smallThemaString = ""
-        self.list = []
-        let kewordString = "&keyword="+keword.text!
-        
-        if kewordString == "&keyword="{
-            url = "http://api.visitkorea.or.kr/openapi/service/rest/KorWithService/areaBasedList?serviceKey=ex%2FH5GN%2BB21X%2B87vYrBxFYdAWSz1cWxgQQDDW9lEeckwagijgq6opR6MlhGxE%2Bth5ydwv1SV%2FVhyd1FpFOlC8g%3D%3D&MobileOS=IOS&MobileApp=OYTG&numOfRows=10"
-        }else{
-            url = "http://api.visitkorea.or.kr/openapi/service/rest/KorWithService/searchKeyword?serviceKey=ex%2FH5GN%2BB21X%2B87vYrBxFYdAWSz1cWxgQQDDW9lEeckwagijgq6opR6MlhGxE%2Bth5ydwv1SV%2FVhyd1FpFOlC8g%3D%3D&MobileOS=IOS&MobileApp=OYTG&numOfRows=10"
-            let param = kewordString
-            let encodedParam = param.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)
-            url += encodedParam!
-        }
-        if selectRowForCity != 0{
-            cityString = "&areaCode=" + String(city.cityCode[selectRowForCity])
-            url += cityString
-            if selectRowForDetail != 0{
-                sigunString = "&sigunguCode=" + String(selectRowForDetail)
-                url += sigunString
+        self.loading.startAnimating()
+        self.searchBtn.isEnabled = false
+        let when = DispatchTime.now() + 0.001 // change 2 to desired number of seconds
+        DispatchQueue.main.asyncAfter(deadline: when) {
+            // Your code with delay
+            var cityString = ""
+            var sigunString = ""
+            var largeThemaString = ""
+            var midThemaString = ""
+            var smallThemaString = ""
+            self.list = []
+            let kewordString = "&keyword="+self.keword.text!
+            
+            if kewordString == "&keyword="{
+                self.url = "http://api.visitkorea.or.kr/openapi/service/rest/KorWithService/areaBasedList?serviceKey=ex%2FH5GN%2BB21X%2B87vYrBxFYdAWSz1cWxgQQDDW9lEeckwagijgq6opR6MlhGxE%2Bth5ydwv1SV%2FVhyd1FpFOlC8g%3D%3D&MobileOS=IOS&MobileApp=OYTG&numOfRows=10"
+            }else{
+                self.url = "http://api.visitkorea.or.kr/openapi/service/rest/KorWithService/searchKeyword?serviceKey=ex%2FH5GN%2BB21X%2B87vYrBxFYdAWSz1cWxgQQDDW9lEeckwagijgq6opR6MlhGxE%2Bth5ydwv1SV%2FVhyd1FpFOlC8g%3D%3D&MobileOS=IOS&MobileApp=OYTG&numOfRows=10"
+                let param = kewordString
+                let encodedParam = param.addingPercentEncoding(withAllowedCharacters: CharacterSet.urlQueryAllowed)
+                self.url += encodedParam!
             }
-        }
-        if selectRowForLargeThema != 0{
-            largeThemaString = "&cat1=" + String(thema.largeCode[selectRowForLargeThema])
-            url += largeThemaString
-            if selectRowForMidThema != 0{
-                midThemaString = "&cat2=" + String(thema.midCode[selectRowForLargeThema][selectRowForMidThema])
-                url += midThemaString
-                if selectRowForSmallThema != 0{
-                    smallThemaString = "&cat3=" + String(thema.smallCode[selectRowForLargeThema][selectRowForMidThema][selectRowForSmallThema])
-                    url += smallThemaString
+            if self.selectRowForCity != 0{
+                cityString = "&areaCode=" + String(self.city.cityCode[self.selectRowForCity])
+                self.url += cityString
+                if self.selectRowForDetail != 0{
+                    sigunString = "&sigunguCode=" + String(self.selectRowForDetail)
+                    self.url += sigunString
                 }
             }
+            if self.selectRowForLargeThema != 0{
+                largeThemaString = "&cat1=" + String(self.thema.self.largeCode[self.selectRowForLargeThema])
+                self.url += largeThemaString
+                if self.selectRowForMidThema != 0{
+                    midThemaString = "&cat2=" + String(self.thema.midCode[self.selectRowForLargeThema][self.selectRowForMidThema])
+                    self.url += midThemaString
+                    if self.selectRowForSmallThema != 0{
+                        smallThemaString = "&cat3=" + String(self.thema.smallCode[self.selectRowForLargeThema][self.selectRowForMidThema][self.selectRowForSmallThema])
+                        self.url += smallThemaString
+                    }
+                }
+            }
+            
+            
+            self.beginParsing(self.url)
+            if self.totalCount == 0{
+                self.showAlert(title: "결 과", message: "검색 결과가 없습니다." )
+            }
+            self.searchBtn.isEnabled = true
         }
-        beginParsing(url)
+    }
+    
+    func showAlert(title: String,message: String){
+        
+        let alertController = UIAlertController(title: title+"\n", message: message, preferredStyle: UIAlertControllerStyle.alert)
+        
+        let defaultAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        alertController.addAction(defaultAction)
+        
+        present(alertController, animated: true, completion: nil)
     }
     
     @IBAction func moreButton(_ sender: Any) {
+        self.moreLoding.startAnimating()
+        self.moreBtn.isHidden = true
+        let when = DispatchTime.now() + 0.001 // change 2 to desired number of seconds
+        DispatchQueue.main.asyncAfter(deadline: when) {
             self.page += 1
             let url = self.url+"&pageNo="+String(self.page)
-            beginParsing(url)
+            self.beginParsing(url)
+            self.moreBtn.isEnabled = true
+            self.moreLoding.stopAnimating()
+        }
     }
     
     
     
     func beginParsing(_ url : String){
+        
         parser = XMLParser(contentsOf:(URL(string:url))!)!
         parser.delegate = self
         parser.parse()
         if self.list.count >= totalCount{
             self.moreBtn.isHidden = true
+        }else{
+            self.moreBtn.isHidden = false
         }
-        tbData!.reloadData()
-        
-
+        tbData.reloadData()
+        self.loading.stopAnimating()
     }
     
     func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?,qualifiedName qName: String?, attributes attributeDict: [String : String]){
@@ -414,7 +453,18 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.list.count
+        if self.list.count == 0{
+            let emptyLabel = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.view.bounds.height))
+            emptyLabel.text = "원하는 지역과 테마와 키워드를\n입력하시고 검색버튼을 눌러주세요"
+            emptyLabel.textColor = UIColor.lightGray
+            emptyLabel.textAlignment = NSTextAlignment.center
+            emptyLabel.numberOfLines = 2
+            self.tbData.backgroundView = emptyLabel
+            self.tbData.separatorStyle = UITableViewCellSeparatorStyle.none
+            return 0
+        }else{
+            return self.list.count
+        }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat

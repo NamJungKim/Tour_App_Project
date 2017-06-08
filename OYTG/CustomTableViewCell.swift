@@ -100,10 +100,10 @@ class CustomTableViewCell: PKSwipeTableViewCell{
             tio?.imageString = "black_star"
             for index in 0..<count{
                 let char = UserDefaults.standard.object(forKey: String(index)) as! String
-                if (tio?.contentid)! == char{
-                    for i in index..<count{
-                        let ch = UserDefaults.standard.object(forKey: String(i+1)) as! String
-                        UserDefaults.standard.set(ch, forKey: String(i))
+                if (tio?.contentid)! == char.substring(to: char.index(char.endIndex, offsetBy: -5)){
+                    for i in index+1..<count{
+                        let ch = UserDefaults.standard.object(forKey: String(i)) as! String
+                        UserDefaults.standard.set(ch, forKey: String(i-1))
                     }
                     UserDefaults.standard.set(0, forKey: String(count))
                     UserDefaults.standard.set(count-1, forKey: "count")

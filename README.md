@@ -35,7 +35,7 @@
 <li>화면 클릭하면 keybord 내려가게 수정</li>
 <li>검색 두번 하면 데이터가 새로 올라오지 않고 이전 데이터에 이어서 출력되던 현상 수정</li></ul></p>
 
-# Eight Commit - 2017.05.29
+# Eighth Commit - 2017.05.29
 <p><ul><li>즐겨찾기 추가 완료</li>
 <li>storyboard에선 cell을 swipe하면 delete기능밖에 못쓰므로 Custom Cell Conroller를 만듬</li>
 <li>swipe하면 별표시가 나타나고 클릭하면 노란색으로 바뀌면서 즐겨찾기 탭에 item 추가 됨</li>
@@ -43,5 +43,5 @@
 <li>picker view의 문제 발견. picker view의 회전이 멈추기전에 다음페이지로 이동을 누르면 row값 적용이 안됨</li>
 <li>약간의 로딩을 줄 예정</li></ul></p>
 
-# Nine Commit - 2017.06.06
+# Nineth Commit - 2017.06.06
 <p><ul><li>행사,숙박,위치기반 Search Page 추가 완료</li>

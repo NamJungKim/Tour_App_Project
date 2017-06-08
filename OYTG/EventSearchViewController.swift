@@ -17,6 +17,12 @@ class EventSearchViewController : UIViewController, UIPickerViewDataSource, UIPi
     @IBOutlet var endTextField: UITextField!
     var startDatePicker : UIDatePicker!
     var endDatePicker : UIDatePicker!
+    
+    @IBOutlet var moreLoding: UIActivityIndicatorView!
+
+    
+    @IBOutlet var searchBtn: UIButton!
+    @IBOutlet var loading: UIActivityIndicatorView!
     //텍스트 필드를 완료 안누르고 다른 텍스트 필드를 누르면 적용되는걸 방지
     var selectRowForCity : Int = 0
     var selectRowForDetail = 0
@@ -336,36 +342,62 @@ class EventSearchViewController : UIViewController, UIPickerViewDataSource, UIPi
         }
     }
     @IBAction func onSearch(_ sender: Any) {
-        url = "http://api.visitkorea.or.kr/openapi/service/rest/KorService/searchFestival?serviceKey=ex%2FH5GN%2BB21X%2B87vYrBxFYdAWSz1cWxgQQDDW9lEeckwagijgq6opR6MlhGxE%2Bth5ydwv1SV%2FVhyd1FpFOlC8g%3D%3D&MobileOS=IOS&MobileApp=OYTG"
-        var cityString = ""
-        var sigunString = ""
-        var eventStartDate = ""
-        var eventEndDate = ""
-        self.list = []
+        self.loading.startAnimating()
+        self.searchBtn.isEnabled = false
+        let when = DispatchTime.now() + 0.001 // change 2 to desired number of seconds
+        DispatchQueue.main.asyncAfter(deadline: when) {
+            self.url = "http://api.visitkorea.or.kr/openapi/service/rest/KorService/searchFestival?serviceKey=ex%2FH5GN%2BB21X%2B87vYrBxFYdAWSz1cWxgQQDDW9lEeckwagijgq6opR6MlhGxE%2Bth5ydwv1SV%2FVhyd1FpFOlC8g%3D%3D&MobileOS=IOS&MobileApp=OYTG"
+            var cityString = ""
+            var sigunString = ""
+            var eventStartDate = ""
+            var eventEndDate = ""
+            self.list = []
         
-        if selectRowForCity != 0{
-            cityString = "&areaCode=" + String(city.cityCode[selectRowForCity])
-            url += cityString
-            if selectRowForDetail != 0{
-                sigunString = "&sigunguCode=" + String(selectRowForDetail)
-                url += sigunString
+            if self.selectRowForCity != 0{
+                cityString = "&areaCode=" + String(self.city.cityCode[self.selectRowForCity])
+                self.url += cityString
+                if self.selectRowForDetail != 0{
+                    sigunString = "&sigunguCode=" + String(self.selectRowForDetail)
+                    self.url += sigunString
+                }
             }
+            if self.startDate != ""{
+                eventStartDate = "&eventStartDate="+self.startDate
+                self.url += eventStartDate
+            }
+            if self.endDate != ""{
+                eventEndDate = "&eventEndDate="+self.endDate
+                self.url += eventEndDate
+            }
+            self.beginParsing(self.url)
+            if self.totalCount == 0{
+                self.showAlert(title: "결 과", message: "검색 결과가 없습니다." )
+            }
+            self.searchBtn.isEnabled = true
         }
-        if startDate != ""{
-            eventStartDate = "&eventStartDate="+startDate
-            url += eventStartDate
-        }
-        if endDate != ""{
-            eventEndDate = "&eventEndDate="+endDate
-            url += eventEndDate
-        }
-        beginParsing(url)
+    }
+    
+    func showAlert(title: String,message: String){
+        
+        let alertController = UIAlertController(title: title+"\n", message: message, preferredStyle: UIAlertControllerStyle.alert)
+        
+        let defaultAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        alertController.addAction(defaultAction)
+        
+        present(alertController, animated: true, completion: nil)
     }
     
     @IBAction func moreButton(_ sender: Any) {
-        self.page += 1
-        let url = self.url+"&pageNo="+String(self.page)
-        beginParsing(url)
+        self.moreLoding.startAnimating()
+        self.moreBtn.isHidden = true
+        let when = DispatchTime.now() + 0.001 // change 2 to desired number of seconds
+        DispatchQueue.main.asyncAfter(deadline: when) {
+            self.page += 1
+            let url = self.url+"&pageNo="+String(self.page)
+            self.beginParsing(url)
+            self.moreBtn.isEnabled = true
+            self.moreLoding.stopAnimating()
+        }
     }
     
     
@@ -378,7 +410,7 @@ class EventSearchViewController : UIViewController, UIPickerViewDataSource, UIPi
             self.moreBtn.isHidden = true
         }
         tbData!.reloadData()
-        
+        self.loading.stopAnimating()
         
     }
     
@@ -458,7 +490,18 @@ class EventSearchViewController : UIViewController, UIPickerViewDataSource, UIPi
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.list.count
+        if self.list.count == 0{
+            let emptyLabel = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.view.bounds.height))
+            emptyLabel.text = "원하는 지역과 날짜를 입력하시고\n검색버튼을 눌러주세요"
+            emptyLabel.textColor = UIColor.lightGray
+            emptyLabel.textAlignment = NSTextAlignment.center
+            emptyLabel.numberOfLines = 2
+            self.tbData.backgroundView = emptyLabel
+            self.tbData.separatorStyle = UITableViewCellSeparatorStyle.none
+            return 0
+        }else{
+            return self.list.count
+        }
     }
     
     func tableView(_ tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat

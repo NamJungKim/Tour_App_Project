@@ -28,33 +28,33 @@ class FavoriteViewController : UITableViewController,XMLParserDelegate{
         super.viewDidLoad()
         var color : UIColor!
         if UserDefaults.standard.object(forKey: "theme") != nil{
-            let char = UserDefaults.standard.object(forKey: "theme") as! String
+            let char = UserDefaults.standard.string(forKey: "theme")
             
-            if char == "emerald"{
+            if char == "Emerald"{
                 color = ThemeColor().emerald
                 self.navigationController?.navigationBar.barTintColor = color //네이게이션바 배경색
                 self.tabBarController?.tabBar.barTintColor = color //탭바 배경색
-            }else if char == "hanuel"{
+            }else if char == "Sky"{
                 color = ThemeColor().hanuel
                 self.navigationController?.navigationBar.barTintColor = color
                 self.tabBarController?.tabBar.barTintColor = color
-            }else if char == "whiteBlack"{
+            }else if char == "LightGray"{
                 color = ThemeColor().whiteGray
                 self.navigationController?.navigationBar.barTintColor = color
                 self.tabBarController?.tabBar.barTintColor = color
-            }else if char == "yellow"{
+            }else if char == "Yellow"{
                 color = ThemeColor().yellow
                 self.navigationController?.navigationBar.barTintColor = color
                 self.tabBarController?.tabBar.barTintColor = color
-            }else if char == "brown"{
+            }else if char == "Brown"{
                 color = ThemeColor().brown
                 self.navigationController?.navigationBar.barTintColor = color
                 self.tabBarController?.tabBar.barTintColor = color
-            }else if char == "white"{
+            }else if char == "White"{
                 color = ThemeColor().white
                 self.navigationController?.navigationBar.barTintColor = color
                 self.tabBarController?.tabBar.barTintColor = color
-            }else if char == "darkBlack"{
+            }else if char == "DarkGray"{
                 color = ThemeColor().darkGray
                 self.navigationController?.navigationBar.barTintColor = color
                 self.tabBarController?.tabBar.barTintColor = color
@@ -153,7 +153,18 @@ class FavoriteViewController : UITableViewController,XMLParserDelegate{
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.list.count
+        if self.list.count == 0{
+            let emptyLabel = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.view.bounds.height))
+            emptyLabel.text = "즐겨찾기 항목이 없습니다."
+            emptyLabel.textColor = UIColor.lightGray
+            emptyLabel.textAlignment = NSTextAlignment.center
+            emptyLabel.numberOfLines = 2
+            self.tbData.backgroundView = emptyLabel
+            self.tbData.separatorStyle = UITableViewCellSeparatorStyle.none
+            return 0
+        }else{
+            return self.list.count
+        }
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

@@ -22,6 +22,8 @@ class FavoriteViewController : UITableViewController,XMLParserDelegate{
         return datalist
     }()
     
+    var indicator = UIActivityIndicatorView()
+    
     fileprivate var oldStoredCell:PKSwipeTableViewCell?
     
     override func viewDidLoad() {
@@ -62,12 +64,32 @@ class FavoriteViewController : UITableViewController,XMLParserDelegate{
         }
         self.tabBarController?.tabBar.tintColor = UIColor.black //탭바아이템 클릭된 아이템 색
         self.tabBarController?.tabBar.unselectedItemTintColor = UIColor.gray //탭바아이템 클릭안된 아이템 색
-        
-        reload()
+        self.activityIndicator()
+        self.indicator.startAnimating()
+        let when = DispatchTime.now() + 0.001 // change 2 to desired number of seconds
+        DispatchQueue.main.asyncAfter(deadline: when) {
+            self.reload()
+            self.indicator.stopAnimating()
+        }
     }
+    
+    func activityIndicator() {
+        indicator = UIActivityIndicatorView(frame: CGRect(x: 177, y: 100, width: 40, height: 40))
+        indicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
+        indicator.center = self.view.center
+        self.view.addSubview(indicator)
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        reload()
+        self.indicator.startAnimating()
+        list = []
+        tbData.reloadData()
+        let when = DispatchTime.now() + 0.001 // change 2 to desired number of seconds
+        DispatchQueue.main.asyncAfter(deadline: when) {
+            self.reload()
+            self.indicator.stopAnimating()
+        }
     }
     
     func reload(){
@@ -153,8 +175,8 @@ class FavoriteViewController : UITableViewController,XMLParserDelegate{
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        let emptyLabel = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.view.bounds.height))
         if self.list.count == 0{
-            let emptyLabel = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.view.bounds.height))
             emptyLabel.text = "즐겨찾기 항목이 없습니다."
             emptyLabel.textColor = UIColor.lightGray
             emptyLabel.textAlignment = NSTextAlignment.center
@@ -163,6 +185,8 @@ class FavoriteViewController : UITableViewController,XMLParserDelegate{
             self.tbData.separatorStyle = UITableViewCellSeparatorStyle.none
             return 0
         }else{
+            emptyLabel.text = ""
+            self.tbData.backgroundView = emptyLabel
             return self.list.count
         }
     }
@@ -186,7 +210,6 @@ class FavoriteViewController : UITableViewController,XMLParserDelegate{
          cell.imageView?.image = resizeImage(image: (cell.imageView?.image)!, targetSize: CGSize(width: 90.0, height: 60.0))
          }*/
         cell.delegate = self
-        cell.configureCell(self.list[indexPath.row])
         cell.configureCell(self.list[indexPath.row])
         if self.list[indexPath.row].thumbnailImage == nil{
             self.list[indexPath.row].thumbnailImage = resizeImage(image: UIImage(named: "noimage")!, targetSize: CGSize(width: 90.0, height: 60.0))

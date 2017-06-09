@@ -374,6 +374,8 @@ class EventSearchViewController : UIViewController, UIPickerViewDataSource, UIPi
                 self.showAlert(title: "결 과", message: "검색 결과가 없습니다." )
             }
             self.searchBtn.isEnabled = true
+            self.loading.stopAnimating()
+
         }
     }
     
@@ -410,7 +412,6 @@ class EventSearchViewController : UIViewController, UIPickerViewDataSource, UIPi
             self.moreBtn.isHidden = true
         }
         tbData!.reloadData()
-        self.loading.stopAnimating()
         
     }
     
@@ -490,8 +491,8 @@ class EventSearchViewController : UIViewController, UIPickerViewDataSource, UIPi
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        let emptyLabel = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.view.bounds.height))
         if self.list.count == 0{
-            let emptyLabel = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.view.bounds.height))
             emptyLabel.text = "원하는 지역과 날짜를 입력하시고\n검색버튼을 눌러주세요"
             emptyLabel.textColor = UIColor.lightGray
             emptyLabel.textAlignment = NSTextAlignment.center
@@ -500,6 +501,8 @@ class EventSearchViewController : UIViewController, UIPickerViewDataSource, UIPi
             self.tbData.separatorStyle = UITableViewCellSeparatorStyle.none
             return 0
         }else{
+            emptyLabel.text = ""
+            self.tbData.backgroundView = emptyLabel
             return self.list.count
         }
     }

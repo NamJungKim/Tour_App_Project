@@ -42,7 +42,7 @@ class CustomTableViewCell: PKSwipeTableViewCell{
         tio = cellData
         self.title.text = cellData.title
         self.detail.text = cellData.addr
-        self.imageView?.image = cellData.thumbnailImage
+        //self.imageView?.image = cellData.thumbnailImage
         imageString = "black_star"
         if (tio?.imageString)! == "yellow_star"{
             imageString = (tio?.imageString)!

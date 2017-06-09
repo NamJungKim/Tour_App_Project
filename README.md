@@ -44,4 +44,15 @@
 <li>약간의 로딩을 줄 예정</li></ul></p>
 
 # Nineth Commit - 2017.06.06
-<p><ul><li>행사,숙박,위치기반 Search Page 추가 완료</li>
+<p><ul><li>행사,숙박,위치기반 Search Page 추가 완료</li></ul></p>
+
+# Tenth Commit - 2017.06.08
+<p><ul><li>여러가지 테마 추가, 적용</li>
+<li>검색중일 때, 더보기 버튼을 클릭시 대기시간동안 activity indicator 나오게 추가</li></ul></p>
+
+# Eleventh Commit - 2017.06.09
+<p><ul><li>검색창 테이블뷰 로딩시 Activity Indicator 추가</li>
+<li>more 버튼 클릭시 로딩중 Activity Indicator 추가</li>
+<li>즐겨찾기 누르면 파싱시간때문에 페이지 넘어가는 딜레이 발생됨</li>
+<li>일단 즐겨찾기 페이지 누르고 Activity Indicator의 Animation을 추가하여 로딩중임을 인지시킴</li></ul></p>
+

@@ -336,6 +336,8 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
                 self.showAlert(title: "결 과", message: "검색 결과가 없습니다." )
             }
             self.searchBtn.isEnabled = true
+            self.loading.stopAnimating()
+
         }
     }
     
@@ -375,7 +377,6 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
             self.moreBtn.isHidden = false
         }
         tbData.reloadData()
-        self.loading.stopAnimating()
     }
     
     func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?,qualifiedName qName: String?, attributes attributeDict: [String : String]){
@@ -453,8 +454,8 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        let emptyLabel = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.view.bounds.height))
         if self.list.count == 0{
-            let emptyLabel = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.view.bounds.height))
             emptyLabel.text = "원하는 지역과 테마와 키워드를\n입력하시고 검색버튼을 눌러주세요"
             emptyLabel.textColor = UIColor.lightGray
             emptyLabel.textAlignment = NSTextAlignment.center
@@ -463,6 +464,8 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
             self.tbData.separatorStyle = UITableViewCellSeparatorStyle.none
             return 0
         }else{
+            emptyLabel.text = ""
+            self.tbData.backgroundView = emptyLabel
             return self.list.count
         }
     }

@@ -66,6 +66,9 @@ class AreaViewController : UIViewController,XMLParserDelegate, UITableViewDataSo
         super.viewWillAppear(animated)
         
     }
+    
+    
+    
     @IBAction func onSearch(_ sender: Any) {
         self.loading.startAnimating()
         self.searchBtn.isEnabled = false
@@ -76,6 +79,8 @@ class AreaViewController : UIViewController,XMLParserDelegate, UITableViewDataSo
         self.url += "&mapY="+self.latitude
         if Int(self.keword.text!) == nil{
             self.showAlert(title: "입력 에러", message: "거리를 입력해주세요.")
+            self.searchBtn.isEnabled = true
+            self.loading.stopAnimating()
             return
         }
         self.url += "&radius="+self.keword.text!
@@ -86,7 +91,7 @@ class AreaViewController : UIViewController,XMLParserDelegate, UITableViewDataSo
             self.showAlert(title: "결 과", message: "검색 결과가 없습니다." )
         }
             self.searchBtn.isEnabled = true
-
+            self.loading.stopAnimating()
         }
     }
     func showAlert(title: String,message: String){
@@ -123,7 +128,6 @@ class AreaViewController : UIViewController,XMLParserDelegate, UITableViewDataSo
             self.moreBtn.isHidden = true
         }
         tbData!.reloadData()
-        self.loading.stopAnimating()
     }
     
     func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?,qualifiedName qName: String?, attributes attributeDict: [String : String]){
@@ -155,8 +159,8 @@ class AreaViewController : UIViewController,XMLParserDelegate, UITableViewDataSo
             tio?.thumbnail?.append(string)
             let url : URL! = URL(string: (tio?.thumbnail!)!)
             let imageData = try! Data(contentsOf: url)
-            tio?.thumbnailImage = UIImage(data: imageData)
-            tio?.thumbnailImage = resizeImage(image: (tio?.thumbnailImage)!, targetSize: CGSize(width: 90.0, height: 60.0))
+            //tio?.thumbnailImage = UIImage(data: imageData)
+            tio?.thumbnailImage = resizeImage(image: UIImage(data: imageData)!, targetSize: CGSize(width: 95.0, height: 60.0))
         }else if element.isEqual(to: "totalCount"){
             totalCount = Int(string)!
             if self.list.count <= totalCount{
@@ -201,8 +205,8 @@ class AreaViewController : UIViewController,XMLParserDelegate, UITableViewDataSo
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        let emptyLabel = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.view.bounds.height))
         if self.list.count == 0{
-            let emptyLabel = UILabel(frame: CGRect(x: 0, y: 0, width: self.view.bounds.width, height: self.view.bounds.height))
             emptyLabel.text = "원하는 거리 반경(m)을 입력하시고\n검색버튼을 눌러주세요"
             emptyLabel.textColor = UIColor.lightGray
             emptyLabel.textAlignment = NSTextAlignment.center
@@ -211,6 +215,8 @@ class AreaViewController : UIViewController,XMLParserDelegate, UITableViewDataSo
             self.tbData.separatorStyle = UITableViewCellSeparatorStyle.none
             return 0
         }else{
+            emptyLabel.text = ""
+            self.tbData.backgroundView = emptyLabel
             return self.list.count
         }
     }
@@ -237,7 +243,7 @@ class AreaViewController : UIViewController,XMLParserDelegate, UITableViewDataSo
         cell.delegate = self
         cell.configureCell(self.list[indexPath.row])
         if self.list[indexPath.row].thumbnailImage == nil{
-            self.list[indexPath.row].thumbnailImage = resizeImage(image: UIImage(named: "noimage")!, targetSize: CGSize(width: 90.0, height: 60.0))
+            self.list[indexPath.row].thumbnailImage = resizeImage(image: UIImage(named: "noimage")!, targetSize: CGSize(width: 95.0, height: 60.0))
         }
         cell.tourImage.image = self.list[indexPath.row].thumbnailImage
         cell.selectionStyle = UITableViewCellSelectionStyle.none

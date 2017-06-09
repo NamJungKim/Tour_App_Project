@@ -11,6 +11,7 @@ import UIKit
 class SettingViewController: UITableViewController {
 
     @IBOutlet var tbData: UITableView!
+    var indicator = UIActivityIndicatorView()
     
     
     let color = ["White","LightGray","DarkGray","Emerald","Sky","Brown","Yellow"]
@@ -46,7 +47,15 @@ class SettingViewController: UITableViewController {
                 self.navigationController?.navigationBar.barTintColor = color
             }
         }
+        activityIndicator()
 
+    }
+    
+    func activityIndicator() {
+        indicator = UIActivityIndicatorView(frame: CGRect(x: 177, y: 100, width: 40, height: 40))
+        indicator.activityIndicatorViewStyle = UIActivityIndicatorViewStyle.gray
+        indicator.center = self.view.center
+        self.view.addSubview(indicator)
     }
     
     func showAlert(title: String,message: String){
@@ -54,7 +63,12 @@ class SettingViewController: UITableViewController {
         let alertController = UIAlertController(title: title+"\n", message: message, preferredStyle: UIAlertControllerStyle.alert)
         
         let okAction = UIAlertAction(title: "변경", style: .default, handler: {handler in
-            UIApplication.shared.keyWindow?.rootViewController = self.storyboard!.instantiateViewController(withIdentifier: "Root_View")
+            self.indicator.startAnimating()
+            let when = DispatchTime.now() + 0.001 // change 2 to desired number of seconds
+            DispatchQueue.main.asyncAfter(deadline: when) {
+                UIApplication.shared.keyWindow?.rootViewController = self.storyboard!.instantiateViewController(withIdentifier: "Root_View")
+                self.indicator.stopAnimating()
+            }
             
         })
         let cancelAction = UIAlertAction(title: "취소", style: .default,handler: nil)

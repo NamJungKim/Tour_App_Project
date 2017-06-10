@@ -462,11 +462,10 @@ class HotelSearchViewController : UIViewController, UIPickerViewDataSource, UIPi
         if segue.identifier == "segueToCommon"{
             if let cell = sender as? CustomTableViewCell {
                 let indexPath = tbData.indexPath(for: cell)
-                let contentid = list[(indexPath?.row)!].contentid
+                let tio = list[(indexPath?.row)!]
                 
                 if let commonDetailViewController = segue.destination as? CommonDetailViewController{
-                    commonDetailViewController.tio.contentid = contentid!
-                    commonDetailViewController.tio.whereAddress = list[(indexPath?.row)!].whereAddress
+                    commonDetailViewController.tio = tio
                 }
             }
         }

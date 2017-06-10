@@ -41,6 +41,9 @@ class TourIO{
     var cat1 : String?
     var cat2 : String?
     var cat3 : String?
+    
+    var eventEnd : String?
+    var eventStart : String?
  
     init() {
         imageString = "black_star"

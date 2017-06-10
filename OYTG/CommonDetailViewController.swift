@@ -22,6 +22,7 @@ class CommonDetailViewController : UIViewController,XMLParserDelegate, MKMapView
     
     var url1 = "http://api.visitkorea.or.kr/openapi/service/rest/KorWithService/detailCommon?serviceKey=ex%2FH5GN%2BB21X%2B87vYrBxFYdAWSz1cWxgQQDDW9lEeckwagijgq6opR6MlhGxE%2Bth5ydwv1SV%2FVhyd1FpFOlC8g%3D%3D&MobileOS=IOS&MobileApp=OYTG&defaultYN=Y&mapinfoYN=Y&catcodeYN=Y&firstImageYN=Y&addrinfoYN=Y&catcodeYN=Y&overviewYN=Y&contentId="
     var url2 = "http://api.visitkorea.or.kr/openapi/service/rest/KorService/detailCommon?serviceKey=ex%2FH5GN%2BB21X%2B87vYrBxFYdAWSz1cWxgQQDDW9lEeckwagijgq6opR6MlhGxE%2Bth5ydwv1SV%2FVhyd1FpFOlC8g%3D%3D&MobileOS=IOS&MobileApp=OYTG&defaultYN=Y&mapinfoYN=Y&catcodeYN=Y&firstImageYN=Y&addrinfoYN=Y&catcodeYN=Y&overviewYN=Y&contentId="
+    var eventurl = "http://api.visitkorea.or.kr/openapi/service/rest/KorService/detailIntro?serviceKey=ex%2FH5GN%2BB21X%2B87vYrBxFYdAWSz1cWxgQQDDW9lEeckwagijgq6opR6MlhGxE%2Bth5ydwv1SV%2FVhyd1FpFOlC8g%3D%3D&MobileOS=IOS&MobileApp=OYTG&contentTypeId=15&contentId="
     
     var locationManager : CLLocationManager = CLLocationManager()
     let regionRadius : CLLocationDistance = 5000
@@ -30,6 +31,15 @@ class CommonDetailViewController : UIViewController,XMLParserDelegate, MKMapView
     var element = NSString()
     let theme = ThemaData()
     var color = UIColor()
+    
+    var startYear = ""
+    var endYear = ""
+    var startMonth = ""
+    var endMonth = ""
+    var startDay = ""
+    var endDay = ""
+    
+    var eventFlag = false
     
     override func viewDidLoad() {
         if tio.whereAddress == true{
@@ -47,11 +57,38 @@ class CommonDetailViewController : UIViewController,XMLParserDelegate, MKMapView
             textView.text.append("전화번호 : 없음\n")
         }
         getTheme()
-        textView.text.append("테마 : "+tio.cat1!+" -> "+tio.cat2!+" -> "+tio.cat3!+"\n\n")
+        textView.text.append("테마 : "+tio.cat1!+" -> "+tio.cat2!+" -> "+tio.cat3!+"\n")
         detailView.text.append(tio.overview!)
         if tio.thumbnailImage == nil{
             firstImageView.image = UIImage(named: "noimage")
         }
+        
+        if tio.contentTypeId == "15"{
+            eventurl += tio.contentid!
+            eventFlag = true
+            beginParsing(eventurl)
+            
+            var temp = tio.eventStart!
+            startYear = temp.substring(to: temp.index(temp.startIndex, offsetBy: 4))
+            temp = temp.substring(from: temp.index(temp.startIndex, offsetBy: 4))
+            startMonth = temp.substring(to: temp.index(temp.startIndex, offsetBy: 2))
+            temp = temp.substring(from: temp.index(temp.startIndex, offsetBy: 2))
+            startDay = temp.substring(to: temp.index(temp.startIndex, offsetBy: 2))
+            temp = temp.substring(from: temp.index(temp.startIndex, offsetBy: 2))
+            
+            temp = tio.eventEnd!
+            endYear = temp.substring(to: temp.index(temp.startIndex, offsetBy: 4))
+            temp = temp.substring(from: temp.index(temp.startIndex, offsetBy: 4))
+            endMonth = temp.substring(to: temp.index(temp.startIndex, offsetBy: 2))
+            temp = temp.substring(from: temp.index(temp.startIndex, offsetBy: 2))
+            endDay = temp.substring(to: temp.index(temp.startIndex, offsetBy: 2))
+            temp = temp.substring(from: temp.index(temp.startIndex, offsetBy: 2))
+            textView.text.append("행사 날짜 : "+startYear+"/"+startMonth+"/"+startDay+" ~ "+endYear+"/"+endMonth+"/"+endDay)
+        }else{
+            textView.text.append("최종 수정일 : "+tio.modifiedYear!+tio.modifiedMonth!+tio.modifiedDay!+tio.modifiedHour!+tio.modifiedMin!+tio.modifiedSec!)
+        }
+        
+        
         changeColor()
         //맵의 초기 화면 중앙을 잡음
         let initialLocation = CLLocation(latitude: Double(tio.latitude!)!, longitude: Double(tio.longitude!)!)
@@ -63,7 +100,6 @@ class CommonDetailViewController : UIViewController,XMLParserDelegate, MKMapView
         annotation.subtitle = tio.addr!
         annotation.coordinate = CLLocationCoordinate2D(latitude: Double(tio.latitude!)!, longitude: Double(tio.longitude!)!)
         mapView.addAnnotation(annotation)
-        
     }
     
     func changeColor(){
@@ -144,56 +180,62 @@ class CommonDetailViewController : UIViewController,XMLParserDelegate, MKMapView
     func parser(_ parser: XMLParser, didStartElement elementName: String, namespaceURI: String?,qualifiedName qName: String?, attributes attributeDict: [String : String]){
         element = elementName as NSString
         if( elementName as NSString).isEqual(to: "item"){
-            tio = TourIO()
-            tio.title = String()
-            tio.title = ""
-            tio.addr = String()
-            tio.addr = ""
-            tio.thumbnail = String()
-            tio.thumbnail = ""
-            tio.thumbnailImage = UIImage()
-            tio.thumbnailImage = nil
-            tio.contentid = String()
-            tio.contentid = ""
-            tio.imageString = String()
-            tio.imageString = ""
-            tio.contentTypeId = String()
-            tio.contentTypeId = ""
-            tio.hompage = String()
-            tio.hompage = ""
-            tio.latitude = String()
-            tio.latitude = ""
-            tio.longitude = String()
-            tio.longitude = ""
-            tio.modifiedDay = String()
-            tio.modifiedDay = ""
-            tio.modifiedMin = String()
-            tio.modifiedMin = ""
-            tio.modifiedSec = String()
-            tio.modifiedSec = ""
-            tio.modifiedHour = String()
-            tio.modifiedHour = ""
-            tio.modifiedYear = String()
-            tio.modifiedYear = ""
-            tio.modifiedMonth = String()
-            tio.modifiedMonth = ""
-            tio.overview = String()
-            tio.overview = ""
-            tio.tel = String()
-            tio.tel = ""
-            tio.contentTypeId = String()
-            tio.contentTypeId = ""
-            tio.cat1 = String()
-            tio.cat1 = ""
-            tio.cat2 = String()
-            tio.cat2 = ""
-            tio.cat3 = String()
-            tio.cat3 = ""
+            if eventFlag == false{
+                tio.title = String()
+                tio.title = ""
+                tio.addr = String()
+                tio.addr = ""
+                tio.thumbnail = String()
+                tio.thumbnail = ""
+                tio.thumbnailImage = UIImage()
+                tio.thumbnailImage = nil
+                tio.contentid = String()
+                tio.contentid = ""
+                tio.imageString = String()
+                tio.imageString = ""
+                tio.contentTypeId = String()
+                tio.contentTypeId = ""
+                tio.hompage = String()
+                tio.hompage = ""
+                tio.latitude = String()
+                tio.latitude = ""
+                tio.longitude = String()
+                tio.longitude = ""
+                tio.modifiedDay = String()
+                tio.modifiedDay = ""
+                tio.modifiedMin = String()
+                tio.modifiedMin = ""
+                tio.modifiedSec = String()
+                tio.modifiedSec = ""
+                tio.modifiedHour = String()
+                tio.modifiedHour = ""
+                tio.modifiedYear = String()
+                tio.modifiedYear = ""
+                tio.modifiedMonth = String()
+                tio.modifiedMonth = ""
+                tio.overview = String()
+                tio.overview = ""
+                tio.tel = String()
+                tio.tel = ""
+                tio.contentTypeId = String()
+                tio.contentTypeId = ""
+                tio.cat1 = String()
+                tio.cat1 = ""
+                tio.cat2 = String()
+                tio.cat2 = ""
+                tio.cat3 = String()
+                tio.cat3 = ""
+            }else{
+                tio.eventStart = String()
+                tio.eventStart = ""
+                tio.eventEnd = String()
+                tio.eventEnd = ""
+            }
         }
     }
     
     func parser(_ parser: XMLParser, foundCharacters string: String) {
-        
+        if eventFlag == false{
         if element.isEqual(to: "title"){
             tio.title = string
         }else if element.isEqual(to: "addr1"){
@@ -202,7 +244,7 @@ class CommonDetailViewController : UIViewController,XMLParserDelegate, MKMapView
             tio.thumbnail?.append(string)
             let url : URL! = URL(string: (tio.thumbnail!))
             let imageData = try! Data(contentsOf: url)
-            tio.thumbnailImage = resizeImage(image: UIImage(data: imageData)!, targetSize: CGSize(width: 166.0, height: 128.0))
+            tio.thumbnailImage = self.resizeImage(image: UIImage(data: imageData)!, targetSize: CGSize(width: 166.0, height: 128.0))
             firstImageView.image = tio.thumbnailImage
         }else if element.isEqual(to: "contentid"){
             tio.contentid?.append(string)
@@ -251,6 +293,13 @@ class CommonDetailViewController : UIViewController,XMLParserDelegate, MKMapView
             tio.cat2?.append(string)
         }else if element.isEqual(to: "cat3"){
             tio.cat3?.append(string)
+        }
+        }else{
+            if element.isEqual(to: "eventstartdate"){
+                tio.eventStart?.append(string)
+            }else if element.isEqual(to: "eventenddate"){
+                tio.eventEnd?.append(string)
+            }
         }
     }
     func resizeImage(image: UIImage, targetSize: CGSize) -> UIImage {

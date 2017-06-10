@@ -73,7 +73,12 @@ class FavoriteViewController : UITableViewController,XMLParserDelegate{
             self.reload()
             self.indicator.stopAnimating()
         }
+        if !UserDefaults.standard.bool(forKey: "iscount"){
+            UserDefaults.standard.set(true, forKey: "iscount")
+            UserDefaults.standard.set(0, forKey: "count")
+        }
     }
+    
     
     func activityIndicator() {
         indicator = UIActivityIndicatorView(frame: CGRect(x: 177, y: 100, width: 40, height: 40))
@@ -84,7 +89,7 @@ class FavoriteViewController : UITableViewController,XMLParserDelegate{
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-            if presentCnt != UserDefaults.standard.integer(forKey: "count"){
+        if presentCnt != UserDefaults.standard.integer(forKey: "count"){
                 self.indicator.startAnimating()
                 list = []
                 tbData.reloadData()
@@ -136,6 +141,10 @@ class FavoriteViewController : UITableViewController,XMLParserDelegate{
             tio?.imageString = String()
             tio?.imageString = "yellow_star"
             tio?.flag = true
+            tio?.eventStart = String()
+            tio?.eventStart = ""
+            tio?.eventEnd = String()
+            tio?.eventEnd = ""
         }
     }
     
@@ -153,6 +162,10 @@ class FavoriteViewController : UITableViewController,XMLParserDelegate{
             tio?.thumbnailImage = resizeImage(image: (tio?.thumbnailImage)!, targetSize: CGSize(width: 90.0, height: 60.0))
         }else if element.isEqual(to: "contentid"){
             tio?.contentid?.append(string)
+        }else if element.isEqual(to: "eventstartdate"){
+            tio?.eventStart?.append(string)
+        }else if element.isEqual(to: "eventenddate"){
+            tio?.eventEnd?.append(string)
         }
     }
     
@@ -243,11 +256,10 @@ class FavoriteViewController : UITableViewController,XMLParserDelegate{
         if segue.identifier == "segueToCommon"{
             if let cell = sender as? CustomTableViewCell {
                 let indexPath = tbData.indexPath(for: cell)
-                let contentid = list[(indexPath?.row)!].contentid
+                let tio = list[(indexPath?.row)!]
                 
                 if let commonDetailViewController = segue.destination as? CommonDetailViewController{
-                    commonDetailViewController.tio.contentid = contentid!
-                    commonDetailViewController.tio.whereAddress = list[(indexPath?.row)!].whereAddress
+                    commonDetailViewController.tio = tio
                 }
             }
         }

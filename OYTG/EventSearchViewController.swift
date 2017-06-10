@@ -432,6 +432,10 @@ class EventSearchViewController : UIViewController, UIPickerViewDataSource, UIPi
             tio?.imageString = String()
             tio?.imageString = ""
             tio?.whereAddress = false
+            tio?.eventStart = String()
+            tio?.eventStart = ""
+            tio?.eventEnd = String()
+            tio?.eventEnd = ""
         }
     }
     
@@ -465,6 +469,10 @@ class EventSearchViewController : UIViewController, UIPickerViewDataSource, UIPi
                 }
             }
             
+        }else if element.isEqual(to: "eventstartdate"){
+            tio?.eventStart = string
+        }else if element.isEqual(to: "eventenddate"){
+            tio?.eventEnd = string
         }
     }
     func resizeImage(image: UIImage, targetSize: CGSize) -> UIImage {
@@ -568,11 +576,11 @@ class EventSearchViewController : UIViewController, UIPickerViewDataSource, UIPi
         if segue.identifier == "segueToCommon"{
             if let cell = sender as? CustomTableViewCell {
                 let indexPath = tbData.indexPath(for: cell)
-                let contentid = list[(indexPath?.row)!].contentid
+                        
+                let tio = list[(indexPath?.row)!]
                 
                 if let commonDetailViewController = segue.destination as? CommonDetailViewController{
-                    commonDetailViewController.tio.contentid = contentid!
-                    commonDetailViewController.tio.whereAddress = list[(indexPath?.row)!].whereAddress
+                    commonDetailViewController.tio = tio
                 }
             }
         }

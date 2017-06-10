@@ -78,6 +78,33 @@ class SettingViewController: UITableViewController {
         
         present(alertController, animated: true, completion: nil)
     }
+    func showAlert2(title: String,message: String){
+        
+        let alertController = UIAlertController(title: title+"\n", message: message, preferredStyle: UIAlertControllerStyle.alert)
+        
+        let okAction = UIAlertAction(title: "변경", style: .default, handler: {handler in
+            for key in UserDefaults.standard.dictionaryRepresentation().keys {
+                UserDefaults.standard.removeObject(forKey: key.description)
+            }
+            self.showAlert3(title: "알 림", message: "초기화되었습니다.")
+        })
+        let cancelAction = UIAlertAction(title: "취소", style: .default,handler: nil)
+        
+        alertController.addAction(cancelAction)
+        alertController.addAction(okAction)
+        
+        present(alertController, animated: true, completion: nil)
+    }
+    func showAlert3(title: String,message: String){
+        
+        let alertController = UIAlertController(title: title+"\n", message: message, preferredStyle: UIAlertControllerStyle.alert)
+        
+        let Action = UIAlertAction(title: "확인", style: .default,handler: nil)
+        
+        alertController.addAction(Action)
+        
+        present(alertController, animated: true, completion: nil)
+    }
     
     func TapGestureRecognizer(gestureRecognizer: UIGestureRecognizer) {
         print("섹션 클릭")
@@ -98,11 +125,11 @@ class SettingViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
-        return 8
+        return 9
     }
 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.row == 0{
+        if indexPath.row == 0 || indexPath.row == 8{
             
         }else{
             if self.flag == true{
@@ -119,6 +146,8 @@ class SettingViewController: UITableViewController {
         if indexPath.row == 0{
             cell = tableView.dequeueReusableCell(withIdentifier: "headerCell", for: indexPath)
             cell.detailTextLabel?.text = "클릭하면 테마들이 나타납니다."
+        }else if indexPath.row == 8{
+            cell = tableView.dequeueReusableCell(withIdentifier: "resetCell", for: indexPath)
         }else{
             cell = tableView.dequeueReusableCell(withIdentifier: "themeCell", for: indexPath)
             cell.textLabel?.text = color[indexPath.row-1]
@@ -154,9 +183,11 @@ class SettingViewController: UITableViewController {
         if indexPath.row == 0{
             self.flag = !self.flag
             tbData.reloadData()
-        }/*else{
-            UserDefaults.standard.setValue(color[indexPath.row-1], forKey: "themeColor")
-         }*/else{
+        }else if indexPath.row == 8{
+            let str = UserDefaults.standard.string(forKey: "theme")
+            self.showAlert2(title: "경 고", message: "모든 즐겨찾기가 초기화됩니다.\n초기화 하시겠습니까?")
+            UserDefaults.standard.set(str, forKey: "theme")
+        }else{
             showAlert(title: "테마 변경", message: "테마를 변경합니다.\n앱의 초기화면으로 돌아갑니다.")
             let index = indexPath.row-1
             let str = color[index]

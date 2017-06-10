@@ -222,6 +222,7 @@
                                             <outlet property="detail" destination="reh-Rn-pva" id="VqC-y4-Ac3"/>
                                             <outlet property="title" destination="lRC-vJ-5fs" id="uCd-VC-QTh"/>
                                             <outlet property="tourImage" destination="YpI-GO-b7L" id="Z47-BG-FcC"/>
+                                            <segue destination="cbc-lv-sMR" kind="presentation" identifier="segueToCommon" id="nKt-GW-K8W"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -284,7 +285,7 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" keyboardType="decimalPad"/>
+                                <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
                             </textField>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="탐색 거리(m)  : " textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="h9z-88-gGG" userLabel="탐색 거리(m)  :">
                                 <rect key="frame" x="20" y="79" width="107" height="21"/>
@@ -355,6 +356,7 @@
                                             <outlet property="detail" destination="BQs-Rd-F6u" id="Lwb-N8-W2c"/>
                                             <outlet property="title" destination="n8E-mm-VIG" id="9wu-ci-PJb"/>
                                             <outlet property="tourImage" destination="6Zp-17-o5v" id="Zo0-3O-GYJ"/>
+                                            <segue destination="cbc-lv-sMR" kind="presentation" identifier="segueToCommon" id="FqO-4e-H58"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -486,6 +488,7 @@
                                             <outlet property="detail" destination="zZM-Yn-THa" id="0YC-1q-xfT"/>
                                             <outlet property="title" destination="BhA-FG-qV3" id="UVr-Aw-OYm"/>
                                             <outlet property="tourImage" destination="iin-oy-eGQ" id="B8j-0m-KdZ"/>
+                                            <segue destination="cbc-lv-sMR" kind="presentation" identifier="segueToCommon" id="E6c-1A-3uE"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -673,6 +676,7 @@
                                     <outlet property="detail" destination="VW8-f9-XB2" id="Xpd-Go-N68"/>
                                     <outlet property="title" destination="Eda-ck-d7V" id="F16-tt-K14"/>
                                     <outlet property="tourImage" destination="rye-Qr-ix5" id="PuX-By-FYx"/>
+                                    <segue destination="cbc-lv-sMR" kind="presentation" identifier="segueToCommon" id="iKb-rE-Sgv"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -682,7 +686,7 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="즐겨 찾기" id="Vgh-U6-w7N">
-                        <barButtonItem key="rightBarButtonItem" style="plain" systemItem="refresh" id="tPd-Mi-dCP">
+                        <barButtonItem key="rightBarButtonItem" style="done" systemItem="refresh" id="tPd-Mi-dCP">
                             <connections>
                                 <action selector="refreshBtn:" destination="2y6-Ts-Sar" id="hEh-4J-tME"/>
                             </connections>
@@ -866,6 +870,7 @@
                                             <outlet property="detail" destination="aNT-lI-aCf" id="HPj-Xf-zB0"/>
                                             <outlet property="title" destination="820-vO-hgu" id="hVA-6a-VpV"/>
                                             <outlet property="tourImage" destination="lz8-BT-foW" id="sVc-EY-moc"/>
+                                            <segue destination="cbc-lv-sMR" kind="presentation" identifier="segueToCommon" id="xoy-ks-byp"/>
                                         </connections>
                                     </tableViewCell>
                                 </prototypes>
@@ -921,9 +926,130 @@
             </objects>
             <point key="canvasLocation" x="6173.6000000000004" y="666.11694152923542"/>
         </scene>
+        <!--기본 정보-->
+        <scene sceneID="CQO-8m-iTE">
+            <objects>
+                <viewController id="cbc-lv-sMR" customClass="CommonDetailViewController" customModule="OYTG" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="fIZ-fu-fcf"/>
+                        <viewControllerLayoutGuide type="bottom" id="4wK-Tn-Y7y"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="XNq-kX-Ffk">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4dP-Y9-2uk">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="64"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Fhv-Mt-65v">
+                                        <rect key="frame" x="15" y="28" width="30" height="30"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <state key="normal" title="닫기"/>
+                                        <connections>
+                                            <action selector="onClose:" destination="cbc-lv-sMR" eventType="touchUpInside" id="i3l-Dj-zIB"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="q25-o6-HTV">
+                                        <rect key="frame" x="329" y="28" width="30" height="30"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                        <state key="normal" title="다음"/>
+                                    </button>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FW6-EG-xSN">
+                                        <rect key="frame" x="45" y="28" width="284" height="30"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="19"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="w2m-xt-XXJ">
+                                        <rect key="frame" x="0.0" y="63" width="375" height="1"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.17374559859154928" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <color key="tintColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <color key="backgroundColor" red="0.87338082901554404" green="0.87338082901554404" blue="0.87338082901554404" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </view>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="XWT-op-1fz">
+                                <rect key="frame" x="16" y="72" width="343" height="168"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </imageView>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" editable="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="L5b-BX-8XB">
+                                <rect key="frame" x="16" y="246" width="343" height="56"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="xkS-y5-Epl">
+                                <rect key="frame" x="16" y="436" width="343" height="211"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            </mapView>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" editable="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="uoz-6x-o3Y">
+                                <rect key="frame" x="16" y="310" width="343" height="118"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="textColor" red="0.5528052137305699" green="0.5528052137305699" blue="0.5528052137305699" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Tx2-Ub-Dnw">
+                                <rect key="frame" x="309" y="246" width="50" height="50"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="tintColor" red="1" green="1" blue="1" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
+                                <state key="normal" backgroundImage="yellow_star"/>
+                                <connections>
+                                    <action selector="onImageButton:" destination="cbc-lv-sMR" eventType="touchUpInside" id="65b-pH-DDA"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="기본 정보" id="A9a-RF-hVc"/>
+                    <connections>
+                        <outlet property="detailView" destination="uoz-6x-o3Y" id="NbD-Wx-CqI"/>
+                        <outlet property="firstImageView" destination="XWT-op-1fz" id="uY8-0n-yyI"/>
+                        <outlet property="imageButton" destination="Tx2-Ub-Dnw" id="uZ2-WF-7RL"/>
+                        <outlet property="mapView" destination="xkS-y5-Epl" id="IHn-1D-7t6"/>
+                        <outlet property="navigationView" destination="4dP-Y9-2uk" id="BjQ-zo-bxL"/>
+                        <outlet property="textView" destination="L5b-BX-8XB" id="PxW-aP-4vp"/>
+                        <outlet property="titleView" destination="FW6-EG-xSN" id="PJQ-0v-Pea"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="cUo-eW-8Hn" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="8679.2000000000007" y="689.5052473763119"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="by3-cc-h7F">
+            <objects>
+                <viewController id="sAL-cd-8vB" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="43E-Aq-3PV"/>
+                        <viewControllerLayoutGuide type="bottom" id="rBF-n5-tH1"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="1Yk-We-xbc">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="VZx-X6-TdG" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+        </scene>
     </scenes>
     <resources>
         <image name="noimage.gif" width="474" height="357"/>
         <image name="noimage.png" width="474" height="357"/>
+        <image name="yellow_star" width="168" height="170"/>
     </resources>
+    <inferredMetricsTieBreakers>
+        <segue reference="E6c-1A-3uE"/>
+    </inferredMetricsTieBreakers>
 </document>

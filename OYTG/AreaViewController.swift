@@ -263,6 +263,20 @@ class AreaViewController : UIViewController,XMLParserDelegate, UITableViewDataSo
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        keword.resignFirstResponder()    }
-
+        keword.resignFirstResponder()
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "segueToCommon"{
+            if let cell = sender as? CustomTableViewCell {
+                let indexPath = tbData.indexPath(for: cell)
+                let contentid = list[(indexPath?.row)!].contentid
+                
+                if let commonDetailViewController = segue.destination as? CommonDetailViewController{
+                    commonDetailViewController.tio.contentid = contentid!
+                    commonDetailViewController.tio.whereAddress = list[(indexPath?.row)!].whereAddress
+                }
+            }
+        }
+    }
 }

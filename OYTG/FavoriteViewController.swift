@@ -22,6 +22,8 @@ class FavoriteViewController : UITableViewController,XMLParserDelegate{
         return datalist
     }()
     
+    var presentCnt = 0
+    
     var indicator = UIActivityIndicatorView()
     
     fileprivate var oldStoredCell:PKSwipeTableViewCell?
@@ -82,19 +84,22 @@ class FavoriteViewController : UITableViewController,XMLParserDelegate{
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.indicator.startAnimating()
-        list = []
-        tbData.reloadData()
-        let when = DispatchTime.now() + 0.001 // change 2 to desired number of seconds
-        DispatchQueue.main.asyncAfter(deadline: when) {
-            self.reload()
-            self.indicator.stopAnimating()
+            if presentCnt != UserDefaults.standard.integer(forKey: "count"){
+                self.indicator.startAnimating()
+                list = []
+                tbData.reloadData()
+                let when = DispatchTime.now() + 0.001 // change 2 to desired number of seconds
+                DispatchQueue.main.asyncAfter(deadline: when) {
+                    self.reload()
+                    self.indicator.stopAnimating()
+                }
         }
     }
     
     func reload(){
         list = []
         let cnt = UserDefaults.standard.integer(forKey: "count")
+        presentCnt = UserDefaults.standard.integer(forKey: "count")
         for index in 0..<cnt{
             let char = UserDefaults.standard.object(forKey: String(index)) as! String
             //뒤의 5글자가 false면 무장애 여행정보 검색 아니면 국문여행정보 검색
@@ -233,5 +238,18 @@ class FavoriteViewController : UITableViewController,XMLParserDelegate{
 
     @IBAction func refreshBtn(_ sender: Any) {
         reload()
+    }
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "segueToCommon"{
+            if let cell = sender as? CustomTableViewCell {
+                let indexPath = tbData.indexPath(for: cell)
+                let contentid = list[(indexPath?.row)!].contentid
+                
+                if let commonDetailViewController = segue.destination as? CommonDetailViewController{
+                    commonDetailViewController.tio.contentid = contentid!
+                    commonDetailViewController.tio.whereAddress = list[(indexPath?.row)!].whereAddress
+                }
+            }
+        }
     }
 }

@@ -290,7 +290,7 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
     @IBAction func onSearch(_ sender: Any) {
         self.loading.startAnimating()
         self.searchBtn.isEnabled = false
-        let when = DispatchTime.now() + 0.001 // change 2 to desired number of seconds
+        let when = DispatchTime.now() + 0.01 // change 2 to desired number of seconds
         DispatchQueue.main.asyncAfter(deadline: when) {
             // Your code with delay
             var cityString = ""
@@ -354,7 +354,7 @@ class TourSearchViewController : UIViewController, UIPickerViewDataSource, UIPic
     @IBAction func moreButton(_ sender: Any) {
         self.moreLoding.startAnimating()
         self.moreBtn.isHidden = true
-        let when = DispatchTime.now() + 0.001 // change 2 to desired number of seconds
+        let when = DispatchTime.now() + 0.01 // change 2 to desired number of seconds
         DispatchQueue.main.asyncAfter(deadline: when) {
             self.page += 1
             let url = self.url+"&pageNo="+String(self.page)

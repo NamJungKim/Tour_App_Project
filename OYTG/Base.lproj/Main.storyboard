@@ -659,7 +659,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="hhN-Wr-kFC" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="5096.8000000000002" y="2168.3658170914546"/>
+            <point key="canvasLocation" x="5166" y="1640"/>
         </scene>
         <!--즐겨 찾기-->
         <scene sceneID="tKX-2g-bsx">
@@ -780,7 +780,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cdX-c3-Bav" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4158" y="2169"/>
+            <point key="canvasLocation" x="4158" y="1433"/>
         </scene>
         <!--행사 검색-->
         <scene sceneID="KUU-vD-vxa">
@@ -967,20 +967,6 @@
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="64"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Fhv-Mt-65v">
-                                        <rect key="frame" x="15" y="28" width="30" height="30"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <state key="normal" title="닫기"/>
-                                        <connections>
-                                            <action selector="onClose:" destination="cbc-lv-sMR" eventType="touchUpInside" id="i3l-Dj-zIB"/>
-                                        </connections>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="q25-o6-HTV">
-                                        <rect key="frame" x="329" y="28" width="30" height="30"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                        <state key="normal" title="다음"/>
-                                    </button>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="FW6-EG-xSN">
                                         <rect key="frame" x="45" y="28" width="284" height="30"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
@@ -998,34 +984,49 @@
                                         <nil key="textColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
+                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Fhv-Mt-65v">
+                                        <rect key="frame" x="337" y="28" width="30" height="30"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <state key="normal" title="완료"/>
+                                        <connections>
+                                            <action selector="onClose:" destination="cbc-lv-sMR" eventType="touchUpInside" id="i3l-Dj-zIB"/>
+                                        </connections>
+                                    </button>
                                 </subviews>
                                 <color key="backgroundColor" red="0.87338082901554404" green="0.87338082901554404" blue="0.87338082901554404" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             </view>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="XWT-op-1fz">
-                                <rect key="frame" x="16" y="72" width="343" height="168"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            </imageView>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" editable="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="L5b-BX-8XB">
-                                <rect key="frame" x="13" y="243" width="343" height="71"/>
+                                <rect key="frame" x="13" y="300" width="343" height="71"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="xkS-y5-Epl">
-                                <rect key="frame" x="16" y="436" width="343" height="211"/>
+                                <rect key="frame" x="16" y="500" width="343" height="147"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </mapView>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" editable="NO" textAlignment="justified" translatesAutoresizingMaskIntoConstraints="NO" id="uoz-6x-o3Y">
-                                <rect key="frame" x="13" y="310" width="343" height="118"/>
+                                <rect key="frame" x="13" y="372" width="343" height="125"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <color key="textColor" red="0.5528052137305699" green="0.5528052137305699" blue="0.5528052137305699" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                             </textView>
+                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZfE-rY-tIk">
+                                <rect key="frame" x="13" y="72" width="343" height="228"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <pageControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="3" translatesAutoresizingMaskIntoConstraints="NO" id="Jha-9f-cco">
+                                        <rect key="frame" x="152" y="203" width="39" height="37"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    </pageControl>
+                                </subviews>
+                                <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </view>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Tx2-Ub-Dnw">
-                                <rect key="frame" x="309" y="246" width="50" height="50"/>
+                                <rect key="frame" x="309" y="300" width="50" height="50"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="tintColor" red="1" green="1" blue="1" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                                 <state key="normal" backgroundImage="yellow_star"/>
@@ -1033,40 +1034,38 @@
                                     <action selector="onImageButton:" destination="cbc-lv-sMR" eventType="touchUpInside" id="65b-pH-DDA"/>
                                 </connections>
                             </button>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" fixedFrame="YES" pagingEnabled="YES" translatesAutoresizingMaskIntoConstraints="NO" id="eQy-mz-Iiz">
+                                <rect key="frame" x="13" y="72" width="343" height="215"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <subviews>
+                                    <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" hidesWhenStopped="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="NZZ-cG-bbc">
+                                        <rect key="frame" x="161" y="100" width="20" height="20"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    </activityIndicatorView>
+                                </subviews>
+                                <connections>
+                                    <outlet property="delegate" destination="cbc-lv-sMR" id="PMN-4b-wnt"/>
+                                </connections>
+                            </scrollView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" title="기본 정보" id="A9a-RF-hVc"/>
                     <connections>
                         <outlet property="detailView" destination="uoz-6x-o3Y" id="NbD-Wx-CqI"/>
-                        <outlet property="firstImageView" destination="XWT-op-1fz" id="uY8-0n-yyI"/>
                         <outlet property="imageButton" destination="Tx2-Ub-Dnw" id="uZ2-WF-7RL"/>
+                        <outlet property="loading" destination="NZZ-cG-bbc" id="meU-Ie-DNI"/>
                         <outlet property="mapView" destination="xkS-y5-Epl" id="IHn-1D-7t6"/>
                         <outlet property="navigationView" destination="4dP-Y9-2uk" id="BjQ-zo-bxL"/>
+                        <outlet property="pageControl" destination="Jha-9f-cco" id="joq-MU-L94"/>
+                        <outlet property="scrollView" destination="eQy-mz-Iiz" id="hiF-mC-qWM"/>
                         <outlet property="textView" destination="L5b-BX-8XB" id="PxW-aP-4vp"/>
                         <outlet property="titleView" destination="FW6-EG-xSN" id="PJQ-0v-Pea"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="cUo-eW-8Hn" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="8679.2000000000007" y="689.5052473763119"/>
-        </scene>
-        <!--View Controller-->
-        <scene sceneID="by3-cc-h7F">
-            <objects>
-                <viewController id="sAL-cd-8vB" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="43E-Aq-3PV"/>
-                        <viewControllerLayoutGuide type="bottom" id="rBF-n5-tH1"/>
-                    </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="1Yk-We-xbc">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="VZx-X6-TdG" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
+            <point key="canvasLocation" x="7206" y="666"/>
         </scene>
     </scenes>
     <resources>

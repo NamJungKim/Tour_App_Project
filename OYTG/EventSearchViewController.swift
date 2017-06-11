@@ -344,7 +344,7 @@ class EventSearchViewController : UIViewController, UIPickerViewDataSource, UIPi
     @IBAction func onSearch(_ sender: Any) {
         self.loading.startAnimating()
         self.searchBtn.isEnabled = false
-        let when = DispatchTime.now() + 0.001 // change 2 to desired number of seconds
+        let when = DispatchTime.now() + 0.01 // change 2 to desired number of seconds
         DispatchQueue.main.asyncAfter(deadline: when) {
             self.url = "http://api.visitkorea.or.kr/openapi/service/rest/KorService/searchFestival?serviceKey=ex%2FH5GN%2BB21X%2B87vYrBxFYdAWSz1cWxgQQDDW9lEeckwagijgq6opR6MlhGxE%2Bth5ydwv1SV%2FVhyd1FpFOlC8g%3D%3D&MobileOS=IOS&MobileApp=OYTG"
             var cityString = ""
@@ -392,7 +392,7 @@ class EventSearchViewController : UIViewController, UIPickerViewDataSource, UIPi
     @IBAction func moreButton(_ sender: Any) {
         self.moreLoding.startAnimating()
         self.moreBtn.isHidden = true
-        let when = DispatchTime.now() + 0.001 // change 2 to desired number of seconds
+        let when = DispatchTime.now() + 0.01 // change 2 to desired number of seconds
         DispatchQueue.main.asyncAfter(deadline: when) {
             self.page += 1
             let url = self.url+"&pageNo="+String(self.page)

@@ -83,9 +83,11 @@ class SettingViewController: UITableViewController {
         let alertController = UIAlertController(title: title+"\n", message: message, preferredStyle: UIAlertControllerStyle.alert)
         
         let okAction = UIAlertAction(title: "변경", style: .default, handler: {handler in
+            let str = UserDefaults.standard.string(forKey: "theme")
             for key in UserDefaults.standard.dictionaryRepresentation().keys {
                 UserDefaults.standard.removeObject(forKey: key.description)
             }
+            UserDefaults.standard.set(str, forKey: "theme")
             self.showAlert3(title: "알 림", message: "초기화되었습니다.")
         })
         let cancelAction = UIAlertAction(title: "취소", style: .default,handler: nil)
@@ -184,9 +186,7 @@ class SettingViewController: UITableViewController {
             self.flag = !self.flag
             tbData.reloadData()
         }else if indexPath.row == 8{
-            let str = UserDefaults.standard.string(forKey: "theme")
             self.showAlert2(title: "경 고", message: "모든 즐겨찾기가 초기화됩니다.\n초기화 하시겠습니까?")
-            UserDefaults.standard.set(str, forKey: "theme")
         }else{
             showAlert(title: "테마 변경", message: "테마를 변경합니다.\n앱의 초기화면으로 돌아갑니다.")
             let index = indexPath.row-1

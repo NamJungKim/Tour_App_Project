@@ -203,7 +203,7 @@ class HotelSearchViewController : UIViewController, UIPickerViewDataSource, UIPi
     @IBAction func onSearch(_ sender: Any) {
         self.loading.startAnimating()
         self.searchBtn.isEnabled = false
-        let when = DispatchTime.now() + 0.001 // change 2 to desired number of seconds
+        let when = DispatchTime.now() + 0.01 // change 2 to desired number of seconds
         DispatchQueue.main.asyncAfter(deadline: when) {
             self.url = "http://api.visitkorea.or.kr/openapi/service/rest/KorService/searchStay?serviceKey=ex%2FH5GN%2BB21X%2B87vYrBxFYdAWSz1cWxgQQDDW9lEeckwagijgq6opR6MlhGxE%2Bth5ydwv1SV%2FVhyd1FpFOlC8g%3D%3D&MobileOS=IOS&MobileApp=OYTG"
             var cityString = ""
@@ -238,16 +238,22 @@ class HotelSearchViewController : UIViewController, UIPickerViewDataSource, UIPi
             self.multiBeginParging(self.url+"&hanOk=1")
             self.multiBeginParging(self.url+"&benikia=1")
             self.tbData!.reloadData()
+            self.searchBtn.isEnabled = true
+            self.loading.stopAnimating()
             return
         }else if self.hanSwitch.isOn && !self.beniSwitch.isOn && self.goodSwitch.isOn && !self.etcSwitch.isOn {
             self.multiBeginParging(self.url+"&hanOk=1")
             self.multiBeginParging(self.url+"&goodStay=1")
             self.tbData!.reloadData()
+            self.searchBtn.isEnabled = true
+            self.loading.stopAnimating()
             return
         }else if !self.hanSwitch.isOn && self.beniSwitch.isOn && self.goodSwitch.isOn && !self.etcSwitch.isOn {
             self.multiBeginParging(self.url+"&goodStay=1")
             self.multiBeginParging(self.url+"&benikia=1")
             self.tbData!.reloadData()
+            self.searchBtn.isEnabled = true
+            self.loading.stopAnimating()
             return
         }else if self.hanSwitch.isOn && !self.beniSwitch.isOn && !self.goodSwitch.isOn && !self.etcSwitch.isOn {
             self.url+="&hanOk=1"
@@ -281,7 +287,7 @@ class HotelSearchViewController : UIViewController, UIPickerViewDataSource, UIPi
     @IBAction func moreButton(_ sender: Any) {
         self.moreLoding.startAnimating()
         self.moreBtn.isHidden = true
-        let when = DispatchTime.now() + 0.001 // change 2 to desired number of seconds
+        let when = DispatchTime.now() + 0.01 // change 2 to desired number of seconds
         DispatchQueue.main.asyncAfter(deadline: when) {
 
             self.page += 1

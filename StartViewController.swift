@@ -13,6 +13,7 @@ class StartViewController : UIViewController, UIScrollViewDelegate {
     @IBOutlet var pageControl : UIPageControl!
     @IBOutlet var button : UIButton!
     
+    @IBOutlet var detailLabel: UILabel!
     var pageImages : [UIImage] = []
     var pageViews : [UIImageView?] = []
     
@@ -22,6 +23,7 @@ class StartViewController : UIViewController, UIScrollViewDelegate {
                       UIImage(named: "fifth.png")!]
         
         let pageCount = self.pageImages.count
+        detailLabel.text = "가고싶은 관광지를 찾아보세요!\n왼쪽으로 스와이프하면\n즐겨찾기를 할 수 있습니다!"
         self.pageControl.currentPage = 0
         self.pageControl.numberOfPages = pageCount
         for _ in 0..<pageCount{
@@ -78,6 +80,17 @@ class StartViewController : UIViewController, UIScrollViewDelegate {
         let lastPage = page + 1
         if lastPage == 5{
             button.isHidden = false
+        }
+        if lastPage == 1{
+            detailLabel.text = "가고싶은 관광지를 찾아보세요!\n왼쪽으로 스와이프하면\n즐겨찾기를 할 수 있습니다!"
+        }else if lastPage == 2{
+            detailLabel.text = "주변에 뭐가 있는지 알아볼까요?"
+        }else if lastPage == 3{
+            detailLabel.text = "원하는 관광지를 클릭하시면\n더욱 자세한 정보를 얻을 수 있습니다!"
+        }else if lastPage == 4{
+            detailLabel.text = "나만의 관광지들을\n만들어 보세요!"
+        }else if lastPage == 5{
+            detailLabel.text = "테마도 마음대로 변경할 수 있어요!\n시작하기버튼을 눌러 지금 떠나보세요!"
         }
         for index in 0..<firstPage+1{
             purgePage(index)

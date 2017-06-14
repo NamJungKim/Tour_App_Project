@@ -22,6 +22,7 @@
 		631F2FD31ECDA04F00A2A3F5 /* TourSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 631F2FD21ECDA04F00A2A3F5 /* TourSearchViewController.swift */; };
 		634B14941ECDFA5700A177E1 /* ThemaData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 634B14931ECDFA5700A177E1 /* ThemaData.swift */; };
 		6396567D1EEEDE53006D3700 /* StartViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6396567C1EEEDE53006D3700 /* StartViewController.swift */; };
+		639656C41EF01297006D3700 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 639656C31EF01297006D3700 /* Media.xcassets */; };
 		63C147AA1ECDBC8200E557E8 /* CityData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C147A91ECDBC8200E557E8 /* CityData.swift */; };
 		63C17D3E1EE6DABC001644D7 /* AreaViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C17D3D1EE6DABC001644D7 /* AreaViewController.swift */; };
 		63C17D481EE6F755001644D7 /* ThemeColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63C17D471EE6F755001644D7 /* ThemeColor.swift */; };
@@ -47,6 +48,7 @@
 		631F2FD21ECDA04F00A2A3F5 /* TourSearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TourSearchViewController.swift; sourceTree = "<group>"; };
 		634B14931ECDFA5700A177E1 /* ThemaData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThemaData.swift; sourceTree = "<group>"; };
 		6396567C1EEEDE53006D3700 /* StartViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StartViewController.swift; path = ../StartViewController.swift; sourceTree = "<group>"; };
+		639656C31EF01297006D3700 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 		63C147A91ECDBC8200E557E8 /* CityData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CityData.swift; sourceTree = "<group>"; };
 		63C17D3D1EE6DABC001644D7 /* AreaViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AreaViewController.swift; sourceTree = "<group>"; };
 		63C17D471EE6F755001644D7 /* ThemeColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ThemeColor.swift; sourceTree = "<group>"; };
@@ -84,6 +86,7 @@
 		631F2FBF1ECD8B5F00A2A3F5 /* OYTG */ = {
 			isa = PBXGroup;
 			children = (
+				639656C31EF01297006D3700 /* Media.xcassets */,
 				63B416251EEC4F79008E51B5 /* detail */,
 				63C17D461EE6EB3D001644D7 /* custom cell */,
 				63C17D451EE6EB2F001644D7 /* data */,
@@ -212,6 +215,7 @@
 			files = (
 				631F2FCB1ECD8B5F00A2A3F5 /* LaunchScreen.storyboard in Resources */,
 				631F2FC81ECD8B5F00A2A3F5 /* Assets.xcassets in Resources */,
+				639656C41EF01297006D3700 /* Media.xcassets in Resources */,
 				631F2FC61ECD8B5F00A2A3F5 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
